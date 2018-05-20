@@ -1,4 +1,4 @@
-package com.canyou.vo;
+package com.canyou.vo.LectureCategory;
 
 public class LectureCategoryVO {
 	private int id;

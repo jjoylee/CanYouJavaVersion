@@ -1,9 +1,8 @@
-package com.canyou.vo;
+package com.canyou.vo.ScoreRequirement;
 
-public class SectionRequirementVO {
+public class ScoreRequirementVO {
 	private int id;
 	private int accountId;
-	private int lectureTypeId;
 	private int cutline;
 	
 	public int getId() {
@@ -17,12 +16,6 @@ public class SectionRequirementVO {
 	}
 	public void setAccountId(int accountId) {
 		this.accountId = accountId;
-	}
-	public int getLectureTypeId() {
-		return lectureTypeId;
-	}
-	public void setLectureTypeId(int lectureTypeId) {
-		this.lectureTypeId = lectureTypeId;
 	}
 	public int getCutline() {
 		return cutline;

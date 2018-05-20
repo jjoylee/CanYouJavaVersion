@@ -1,4 +1,4 @@
-package com.canyou.vo;
+package com.canyou.vo.Section;
 
 public class SectionVO {
 	private int id;

@@ -1,4 +1,4 @@
-package com.canyou.vo;
+package com.canyou.vo.Account;
 
 public class AccountVO {
 	private int id;
