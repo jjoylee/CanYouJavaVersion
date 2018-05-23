@@ -8,24 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class LectureCategoryDaoImpl implements LectureCategoryDao{
 	@Autowired
 	JdbcTemplate jdbcTemplate;
-	
-	@Override
-	public int insert(LectureCategoryVO vo) {
-		String query = "Insert into LectureCategory(name) VALUES(?)";
-        return jdbcTemplate.update(query, vo.getName());
-	}
-
-	@Override
-	public int update(LectureCategoryVO vo) {
-		String query = "UPDATE LectureCategory SET name = ? where id = ?";
-        return jdbcTemplate.update(query,vo.getName(),vo.getId());
-	}
-
-	@Override
-	public int delete(int id) {
-		String query = "delete from LectureCategory where id= ?";
-        return jdbcTemplate.update(query, id);
-	}
 
 	@Override
 	public List<LectureCategoryVO> findAll() {
