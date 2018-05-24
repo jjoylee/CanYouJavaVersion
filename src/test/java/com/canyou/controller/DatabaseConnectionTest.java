@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 
 import org.junit.Test;
 
+import static org.junit.Assert.*;
 
 public class DatabaseConnectionTest {
 	 private static final String DRIVER = "com.mysql.jdbc.Driver";
@@ -12,12 +13,14 @@ public class DatabaseConnectionTest {
 	    private static final String PW = "zerock";  
 	    
 	    @Test
-	    public void testConnection() throws Exception {
+	    public void testConnection() throws ClassNotFoundException {
 	        Class.forName(DRIVER);
 	        try(Connection conn = DriverManager.getConnection(URL, USER, PW)) {
 	            System.out.println(conn);
 	        } catch(Exception e) {
 	            e.printStackTrace();
 	        }
+//	    	assertTrue(false);
+	    	
 	    }
 }

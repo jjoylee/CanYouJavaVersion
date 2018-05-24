@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class AccountController {
 	
 	@RequestMapping(value = "/Join", method = RequestMethod.GET)
-	public String join() throws Exception{
+	public String join(String type) {
+		if(type.equalsIgnoreCase("j")) return "/account/junghee";
 		return "/account/join";
 	}
 }
