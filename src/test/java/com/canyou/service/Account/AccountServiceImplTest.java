@@ -2,9 +2,12 @@ package com.canyou.service.Account;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
 
 import org.apache.tomcat.util.buf.StringCache;
 import org.junit.Before;
@@ -12,6 +15,7 @@ import org.junit.Test;
 
 import com.canyou.model.Account.AccountDao;
 import com.canyou.model.Account.AccountVO;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 import junit.framework.Assert;
 
@@ -24,7 +28,7 @@ public class AccountServiceImplTest {
 	public void setUp(){
 		dao = mock(AccountDao.class);
 		service = new AccountServiceImpl();
-		service.accountDao= dao;
+		service.accountDao = dao;
 	}
 	
 	@Test
@@ -47,13 +51,14 @@ public class AccountServiceImplTest {
 	
 	@Test
 	public void findByEmailTest(){
-		String email = any(String.class);
+		String email = "email";
 		AccountVO expectObj = mock(AccountVO.class);
 		when(service.findByEmail(email)).thenReturn(expectObj);
 		AccountVO resultObj = service.findByEmail(email);
 		verify(dao,times(1)).findByEmail(email);
 		assertEquals(expectObj, resultObj);
 	}
+	
 	@Test
 	public void updateStateTest(){
 		int accountId = any(Integer.class);

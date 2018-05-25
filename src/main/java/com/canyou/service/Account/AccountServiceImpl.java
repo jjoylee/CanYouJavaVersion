@@ -1,5 +1,7 @@
 package com.canyou.service.Account;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.canyou.model.Account.AccountDao;
@@ -13,7 +15,7 @@ public class AccountServiceImpl implements AccountService{
 		return accountDao.insert(vo);
 	}
 
-	public int update(AccountVO vo) {
+	public int update(AccountVO vo) {		
 		return accountDao.update(vo);		
     }
 
@@ -23,5 +25,5 @@ public class AccountServiceImpl implements AccountService{
 
 	public int updateState(int accountId, String state) {
 		return accountDao.updateState(accountId, state);
-	} 
+	}
 }

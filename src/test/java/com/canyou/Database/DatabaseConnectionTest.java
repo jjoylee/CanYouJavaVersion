@@ -1,4 +1,4 @@
-package com.canyou.controller;
+package com.canyou.Database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
