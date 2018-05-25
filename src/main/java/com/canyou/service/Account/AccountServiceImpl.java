@@ -1,12 +1,12 @@
 package com.canyou.service.Account;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.canyou.model.Account.AccountDao;
 import com.canyou.model.Account.AccountVO;
 
+@Service
 public class AccountServiceImpl implements AccountService{
 	@Autowired
 	public AccountDao accountDao;
