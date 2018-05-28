@@ -1,4 +1,4 @@
-package com.canyoud.service.LectureCategoryRequirement;
+package com.canyou.service.LectureCategoryRequirement;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementDao;
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
+import com.canyou.service.LectureCategoryRequirement.LectureCategoryRequirementServiceImpl;
 
 public class LectureCategoryRequirementServiceImplTest {
 	

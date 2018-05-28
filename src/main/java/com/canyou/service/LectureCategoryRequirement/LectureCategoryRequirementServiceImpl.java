@@ -1,4 +1,4 @@
-package com.canyoud.service.LectureCategoryRequirement;
+package com.canyou.service.LectureCategoryRequirement;
 
 import java.util.List;
 
