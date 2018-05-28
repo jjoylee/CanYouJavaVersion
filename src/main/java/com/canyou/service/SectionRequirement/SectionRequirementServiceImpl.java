@@ -3,10 +3,12 @@ package com.canyou.service.SectionRequirement;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.canyou.model.SectionRequirement.SectionRequirementDao;
 import com.canyou.model.SectionRequirement.SectionRequirementVO;
 
+@Service
 public class SectionRequirementServiceImpl implements SectionRequirementService{
 
 	@Autowired

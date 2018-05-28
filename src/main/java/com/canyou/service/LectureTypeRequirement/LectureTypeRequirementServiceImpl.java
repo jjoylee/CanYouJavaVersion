@@ -3,10 +3,12 @@ package com.canyou.service.LectureTypeRequirement;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementDao;
 import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementVO;
 
+@Service
 public class LectureTypeRequirementServiceImpl implements LectureTypeRequirementService{
 
 	@Autowired

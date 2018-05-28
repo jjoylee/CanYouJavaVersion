@@ -3,10 +3,12 @@ package com.canyou.service.Section;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.canyou.model.Section.SectionDao;
 import com.canyou.model.Section.SectionVO;
 
+@Service
 public class SectionServiceImpl implements SectionService{
 
 	@Autowired 

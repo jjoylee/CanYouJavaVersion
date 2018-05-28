@@ -4,7 +4,7 @@
 <layout:extends name="../shared/loginLayout.jsp">
 	<layout:put block="contents">
 		<h2>회원가입</h2>
-		<form class="pure-form pure-form-aligned" id="frmJoin" action="/Account/JoinUpdate" method="post">
+		<form class="pure-form pure-form-aligned" id="frmJoin" action="/account/join" method="post">
 		    <fieldset>
 		        <div class="pure-control-group">
 		            <label for="email">이메일(아이디)</label>
@@ -64,10 +64,13 @@
 
             $("#frmJoin").ajaxForm({
                 success: function (data, statusText, xhr, $form) {
+                	
                     if (data.result == 'fail') {
+                    	alert(data);
                         alert(data.message);
                     } else {
-                        $(location).attr('href', "/Account/Login");
+                    	alert("회원가입");
+                        $(location).attr('href', "/account/login");
                     }
                 },
                 dataType: 'json'

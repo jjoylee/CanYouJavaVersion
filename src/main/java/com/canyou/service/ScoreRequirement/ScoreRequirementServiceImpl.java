@@ -3,10 +3,12 @@ package com.canyou.service.ScoreRequirement;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.canyou.model.ScoreRequirement.ScoreRequirementDao;
 import com.canyou.model.ScoreRequirement.ScoreRequirementVO;
 
+@Service
 public class ScoreRequirementServiceImpl implements ScoreRequirementService{
 
 	@Autowired

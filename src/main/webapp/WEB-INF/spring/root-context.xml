@@ -19,4 +19,11 @@
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name = "dataSource" ref="dataSource"/>
     </bean>
+    
+   <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+		<property name="contentType" value="application/json;charset=UTF-8"> </property>
+	</bean>
+	
+	<context:component-scan base-package="com.canyou.model"></context:component-scan>
+ 	<context:component-scan base-package="com.canyou.service"></context:component-scan>
 </beans>
