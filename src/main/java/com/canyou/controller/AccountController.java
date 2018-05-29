@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.canyou.model.Account.AccountVO;
 import com.canyou.service.Account.AccountService;
@@ -30,15 +30,31 @@ public class AccountController {
 	}
 	
 	@RequestMapping(value = "/join", method = RequestMethod.POST)
-	public ModelAndView join(AccountVO account) {
+	@ResponseBody
+	public Map<String,String> join(AccountVO account) {
 		AccountVO existAccount = accountService.findByEmail(account.getEmail());
-		ModelAndView modelAndView = new ModelAndView("jsonView");
-		if(existAccount == null) {
+		if(existAccount != null)
+			return getFailMessage("이미 가입된 회원입니다.");
+		try{
 			account.setState("REG");
 			accountService.insert(account);
-			modelAndView.addObject("result", "success");
+			return getSuccessMessage();
+		}catch(Exception e){
+			return getFailMessage(e.getMessage());
 		}
-		
-		return modelAndView;
 	}
+
+	public Map<String,String> getFailMessage(String message) {
+		Map<String,String> result = new HashMap<String,String>();
+		result.put("result", "fail");
+		result.put("message", message);
+		return result;
+	}
+
+	public Map<String, String> getSuccessMessage() {
+		Map<String,String> result = new HashMap<String,String>();
+		result.put("result", "success");
+		return result;
+	}
+
 }

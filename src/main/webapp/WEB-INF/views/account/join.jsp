@@ -64,12 +64,10 @@
 
             $("#frmJoin").ajaxForm({
                 success: function (data, statusText, xhr, $form) {
-                	
                     if (data.result == 'fail') {
-                    	alert(data);
                         alert(data.message);
                     } else {
-                    	alert("회원가입");
+                    	alert(data.result);
                         $(location).attr('href', "/account/login");
                     }
                 },
