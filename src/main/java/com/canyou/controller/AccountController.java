@@ -32,8 +32,8 @@ public class AccountController {
 	@RequestMapping(value = "/join", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,String> join(AccountVO account) {
-		AccountVO existAccount = accountService.findByEmail(account.getEmail());
-		if(existAccount != null)
+		AccountVO checkExistAccount = accountService.findByEmail(account.getEmail());
+		if(checkExistAccount != null)
 			return getFailMessage("이미 가입된 회원입니다.");
 		try{
 			account.setState("REG");
@@ -54,6 +54,7 @@ public class AccountController {
 	public Map<String, String> getSuccessMessage() {
 		Map<String,String> result = new HashMap<String,String>();
 		result.put("result", "success");
+		
 		return result;
 	}
 
