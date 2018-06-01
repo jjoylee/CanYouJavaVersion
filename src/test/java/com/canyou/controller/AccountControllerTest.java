@@ -55,22 +55,26 @@ public class AccountControllerTest {
 		AccountController spy = spy(ctrl);
 		AccountVO account = mock(AccountVO.class);
 		when(service.findByEmail(any(String.class))).thenReturn(account);	
-		doReturn(mock(Map.class)).when(spy).getFailMessage("이미 가입된 회원입니다.");
-		spy.join(account);
+		Map<String,String> expect = mock(Map.class);
+		doReturn(expect).when(spy).getFailMessage("이미 가입된 회원입니다.");
+		Map<String,String> result = spy.join(account);
 		verify(spy, times(1)).getFailMessage("이미 가입된 회원입니다.");
+		assertEquals(expect, result);
 	}
 	
 	@Test
 	public void joinPost_exception_test() {
 		AccountController spy = spy(ctrl);
 		AccountVO account = mock(AccountVO.class);
-		when(service.findByEmail(any(String.class))).thenReturn(account);
+		when(service.findByEmail(any(String.class))).thenReturn(null);
 		DataAccessException exception = mock(DataAccessException.class);
 		when(service.insert(account)).thenThrow(exception);
 		when(exception.getMessage()).thenReturn("데이터에러");
-		doReturn(mock(Map.class)).when(spy).getFailMessage("데이터에러");
-		spy.join(account);
+		Map<String,String> expect = mock(Map.class);
+		doReturn(expect).when(spy).getFailMessage("데이터에러");
+		Map<String,String> result = spy.join(account);
 		verify(spy, times(1)).getFailMessage("데이터에러");
+		assertEquals(expect, result);
 	}
 	
 	@Test 
