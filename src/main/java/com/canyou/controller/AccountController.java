@@ -2,6 +2,8 @@ package com.canyou.controller;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,14 +23,19 @@ public class AccountController extends AbstractController{
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public Map<String,String> login(@RequestParam("email") String email, @RequestParam("password") String password) 
+	@ResponseBody
+	public Map<String,String> login(@RequestParam("email") String email, @RequestParam("password") String password, HttpSession session) 
 	{
 		AccountVO account = accountService.findByEmail(email);
 		if(account == null) 
 			return getFailMessage("존재하지 않는 이메일입니다.");
+		if(account.getState().equals("DEL"))
+			return getFailMessage("탈퇴한 이메일입니다.");
 		if(!account.getPassword().equals(password)) 
 			return getFailMessage("존재하지 않는 비밀번호입니다.");
-		return getFailMessage("end");
+		session.setAttribute("loginAccount", account);
+		loginAccount = account;
+		return getSuccessMessage();
 	}
 	
 	@RequestMapping(value = "/join", method = RequestMethod.GET)

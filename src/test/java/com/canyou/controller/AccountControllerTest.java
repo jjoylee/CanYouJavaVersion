@@ -11,6 +11,8 @@ import static org.mockito.Mockito.spy;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
@@ -24,6 +26,9 @@ public class AccountControllerTest {
 	AccountController ctrl;
 	AccountService service;
 	AccountController spy;
+	AccountVO account;
+	HttpSession session;
+	Map<String,String> expect;
 	
 	@Before 
 	public void setUp(){
@@ -31,6 +36,9 @@ public class AccountControllerTest {
 		service = mock(AccountService.class);
 		ctrl.accountService = service;	
 		spy = spy(ctrl);
+		account = mock(AccountVO.class);
+		session = mock(HttpSession.class);
+		expect = mock(Map.class);
 	}
 	
 	@Test
@@ -51,35 +59,50 @@ public class AccountControllerTest {
 	
 	@Test 
 	public void login_email_not_exist_Test(){
-		String email = "email";
-		AccountController spy = spy(ctrl);
-		when(service.findByEmail(email)).thenReturn(null);
-		Map<String, String> expect = mock(Map.class);
+		when(service.findByEmail(any(String.class))).thenReturn(null);
 		doReturn(expect).when(spy).getFailMessage("존재하지 않는 이메일입니다.");
-		Map<String, String> result = spy.login(email, "password");
+		Map<String, String> result = spy.login("email", "password", session);
 		verify(spy, times(1)).getFailMessage("존재하지 않는 이메일입니다.");
 		assertEquals(expect, result);
 	}
 	
 	@Test 
 	public void login_password_wrong_Test(){
-		AccountVO account= mock(AccountVO.class);
-		AccountController spy = spy(ctrl);
 		when(service.findByEmail(any(String.class))).thenReturn(account);
 		when(account.getPassword()).thenReturn("pass");
-		Map<String, String> expect = mock(Map.class);
+		when(account.getState()).thenReturn("REG");
 		doReturn(expect).when(spy).getFailMessage("존재하지 않는 비밀번호입니다.");
-		Map<String, String> result = spy.login("email","password");
+		Map<String, String> result = spy.login("email","password", session);
 		verify(spy, times(1)).getFailMessage("존재하지 않는 비밀번호입니다.");
 		assertEquals(expect, result);
 	}
 	
 	@Test
+	public void login_already_withdraw_Test(){
+		when(service.findByEmail(any(String.class))).thenReturn(account);
+		when(account.getState()).thenReturn("DEL");
+		doReturn(expect).when(spy).getFailMessage("탈퇴한 이메일입니다.");
+		Map<String,String> result = spy.login("email","password",session);
+		verify(spy, times(1)).getFailMessage("탈퇴한 이메일입니다.");
+		assertEquals(expect, result);
+	}
+	
+	@Test 
+	public void login_success_test(){
+		when(service.findByEmail(any(String.class))).thenReturn(account);
+		when(account.getState()).thenReturn("REG");
+		when(account.getPassword()).thenReturn("password");
+		doReturn(expect).when(spy).getSuccessMessage();
+		Map<String,String> result = spy.login("email","password",session);
+		verify(session,times(1)).setAttribute("loginAccount", account);
+		verify(spy,times(1)).getSuccessMessage();
+		assertEquals(spy.loginAccount,account);
+		assertEquals(expect, result);
+	}
+	
+	@Test
 	public void joinPost_not_exist_test() {
-		AccountController spy = spy(ctrl);
-		AccountVO account = mock(AccountVO.class);
-		when(service.findByEmail(account.getEmail())).thenReturn(null);
-		Map<String,String> expect = mock(Map.class);
+		when(service.findByEmail(any(String.class))).thenReturn(null);
 		doReturn(expect).when(spy).getSuccessMessage();
 		Map<String,String> result = spy.join(account);
 		verify(account,times(1)).setState("REG");
@@ -90,10 +113,7 @@ public class AccountControllerTest {
 	
 	@Test
 	public void joinPost_exist_test() {
-		AccountController spy = spy(ctrl);
-		AccountVO account = mock(AccountVO.class);
-		when(service.findByEmail(account.getEmail())).thenReturn(account);	
-		Map<String,String> expect = mock(Map.class);
+		when(service.findByEmail(any(String.class))).thenReturn(account);	
 		doReturn(expect).when(spy).getFailMessage("이미 가입된 회원입니다.");
 		Map<String,String> result = spy.join(account);
 		verify(spy, times(1)).getFailMessage("이미 가입된 회원입니다.");
@@ -102,13 +122,10 @@ public class AccountControllerTest {
 	
 	@Test
 	public void joinPost_exception_test() {
-		
-		AccountVO account = mock(AccountVO.class);
-		when(service.findByEmail(account.getEmail())).thenReturn(null);
+		when(service.findByEmail(any(String.class))).thenReturn(null);
 		DataAccessException exception = mock(DataAccessException.class);
 		when(service.insert(account)).thenThrow(exception);
 		when(exception.getMessage()).thenReturn("데이터에러");
-		Map<String,String> expect = mock(Map.class);
 		doReturn(expect).when(spy).getFailMessage("데이터에러");
 		Map<String,String> result = spy.join(account);
 		verify(spy, times(1)).getFailMessage("데이터에러");
