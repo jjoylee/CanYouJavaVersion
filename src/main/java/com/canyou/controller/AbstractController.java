@@ -4,14 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import com.canyou.model.Account.AccountVO;
 import com.canyou.service.Account.AccountService;
+import com.canyou.service.LectureDetail.LectureDetailService;
 
+@Controller
 public class AbstractController {
 	
 	@Autowired
 	AccountService accountService;
+	@Autowired
+	LectureDetailService lectureDetailService;
 	
 	protected AccountVO loginAccount;
 	

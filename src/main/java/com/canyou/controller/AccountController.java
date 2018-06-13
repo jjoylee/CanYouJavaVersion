@@ -35,6 +35,7 @@ public class AccountController extends AbstractController{
 			return getFailMessage("존재하지 않는 비밀번호입니다.");
 		session.setAttribute("loginAccount", account);
 		loginAccount = account;
+		System.out.println(loginAccount.getId());
 		return getSuccessMessage();
 	}
 	
