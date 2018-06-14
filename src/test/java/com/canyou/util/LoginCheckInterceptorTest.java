@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.canyou.model.Account.AccountVO;
+
 public class LoginCheckInterceptorTest {
 	
 	LoginCheckInterceptor interceptor;
@@ -24,6 +26,7 @@ public class LoginCheckInterceptorTest {
 	Object handler;
 	HttpServletRequest request;
 	HttpServletResponse response;
+	boolean result;
 	
 	@Before
 	public void setUp(){
@@ -36,7 +39,7 @@ public class LoginCheckInterceptorTest {
 	
 	@Test
 	public void redirectToLoginPage_test() throws IOException{
-		boolean result = interceptor.redirectToLoginPage(response);
+		result = interceptor.redirectToLoginPage(response);
 		assertFalse(result);
 		verify(response,times(1)).sendRedirect("/account/login");
 	}
@@ -45,16 +48,28 @@ public class LoginCheckInterceptorTest {
 	public void session_not_exist_test() throws IOException {
 		when(request.getSession(false)).thenReturn(null);
 		doReturn(false).when(spy).redirectToLoginPage(response);
-		boolean result = spy.preHandle(request, response, handler);
+		result = spy.preHandle(request, response, handler);
 		verify(spy, times(1)).redirectToLoginPage(response);
+		assertFalse(result);
 	}
 	
 	@Test
 	public void not_logged_in_test() throws IOException {
-//		HttpSession session = mock(HttpSession.class);
-//		when(request.getSession(false)).thenReturn(session);
-//		doReturn(false).when(spy).redirectToLoginPage(response);
-//		boolean result = spy.preHandle(request, response, handler);
-//		verify(spy, times(1)).redirectToLoginPage(response);
+		HttpSession session = mock(HttpSession.class);
+		when(request.getSession(false)).thenReturn(session);
+		when(session.getAttribute("loginAccount")).thenReturn(null);
+		doReturn(false).when(spy).redirectToLoginPage(response);
+		result = spy.preHandle(request, response, handler);
+		verify(spy, times(1)).redirectToLoginPage(response);
+		assertFalse(result);
+	}
+	
+	@Test
+	public void login_success_test() throws IOException {
+		HttpSession session = mock(HttpSession.class);
+		when(request.getSession(false)).thenReturn(session);
+		when(session.getAttribute("loginAccount")).thenReturn(mock(Object.class));
+		result = interceptor.preHandle(request, response, handler);
+		assertTrue(result);
 	}
 }

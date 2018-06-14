@@ -8,12 +8,14 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.canyou.model.Account.AccountVO;
+
 public class LoginCheckInterceptor extends HandlerInterceptorAdapter{
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,Object handler) throws IOException{
 		HttpSession session = request.getSession(false);
-		if(session == null){
+		if(session == null) return redirectToLoginPage(response);
+		if(session.getAttribute("loginAccount") == null)
 			return redirectToLoginPage(response);
-		}
 		return true;
 	}
 
