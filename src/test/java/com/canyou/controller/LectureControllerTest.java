@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import static org.mockito.Mockito.spy;
 
 import org.junit.Before;
@@ -24,23 +26,28 @@ import com.canyou.service.LectureDetail.LectureDetailService;
 public class LectureControllerTest {
 	
 	LectureController ctrl;
+	LectureController spy;
+	LectureDetailService service;
 	
 	@Before 
 	public void setUp(){
 		ctrl = new LectureController();
+		service = mock(LectureDetailService.class);
+		ctrl.lectureDetailService = service;
+		spy = spy(ctrl);
 	}
 	
 	@Test
 	public void list_test(){
-		LectureDetailService service = mock(LectureDetailService.class);
-		ctrl.lectureDetailService = service;
 		Model model = mock(Model.class);
+		HttpSession session = mock(HttpSession.class);
 		AccountVO account = mock(AccountVO.class);
+		doReturn(account).when(spy).getLoginAccount(session);
+		when(account.getId()).thenReturn(1);
 		List<LectureDetailVO> list = mock(List.class);
 		when(service.findByAccountId(any(Integer.class))).thenReturn(list);
-	
-		String result = ctrl.list(model);
-		verify(service, times(1)).findByAccountId(any(Integer.class));
+		String result = spy.list(model, session);
+		verify(service, times(1)).findByAccountId(1);
 		verify(model,  times(1)).addAttribute("list",list);
 		assertEquals("/lecture/list", result);
 	}

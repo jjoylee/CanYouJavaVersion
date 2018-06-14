@@ -16,11 +16,10 @@ import com.canyou.model.LectureDetail.LectureDetailVO;
 public class LectureController extends AbstractController{
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public String list(Model model){
-		//System.out.println(lectureDetailService.findByAccountId(loginAccount.getId()));
-//		if(list != null){
-//			model.addAttribute("list",list);
-//		}
+	public String list(Model model, HttpSession session){
+		int accountId = getLoginAccount(session).getId();
+		List<LectureDetailVO> list = lectureDetailService.findByAccountId(accountId);
+		model.addAttribute("list",list);
 		return "/lecture/list";
 	} 
 }

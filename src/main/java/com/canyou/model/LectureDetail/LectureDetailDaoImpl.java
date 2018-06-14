@@ -42,7 +42,7 @@ public class LectureDetailDaoImpl implements LectureDetailDao {
 		query.append("c.name lectureCategoryName, ifnull(d.name ,'구분없음') sectionName ");
 		query.append("from LectureDetail a left outer join LectureType b on a.lectureTypeId=b.id ");
 		query.append("inner join LectureCategory c on a.lectureCategoryId = c.id ");
-		query.append("left outer join Section d on a.sectionId = d.id where accountId=?");
+		query.append("left outer join Section d on a.sectionId = d.id where accountId=? ");
 		query.append("order by lectureCategoryId, lectureTypeId, sectionId");
         return jdbcTemplate.query(query.toString(), new Object[]{accountId}, new LectureDetailMapper());
 	}
