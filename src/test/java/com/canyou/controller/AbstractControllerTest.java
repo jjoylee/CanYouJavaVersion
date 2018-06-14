@@ -1,11 +1,19 @@
 package com.canyou.controller;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import com.canyou.model.Account.AccountVO;
 
 public class AbstractControllerTest {
 
@@ -28,5 +36,15 @@ public class AbstractControllerTest {
 	public void getSucessMessageTest(){
 		Map<String, String> result = ctrl.getSuccessMessage();
 		assertEquals("success",result.get("result"));
+	}
+	
+	@Test 
+	public void getLoginAccount_Test(){
+		HttpSession session = mock(HttpSession.class);
+		AccountVO account = mock(AccountVO.class);
+		when(session.getAttribute("loginAccount")).thenReturn(account);
+		AccountVO result = ctrl.getLoginAccount(session);
+		verify(session, times(1)).getAttribute("loginAccount");
+		assertEquals(account,result);
 	}
 }

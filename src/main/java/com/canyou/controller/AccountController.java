@@ -18,7 +18,7 @@ public class AccountController extends AbstractController{
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login() {
-		if(loginAccount != null) return "redirect:/lecture/list";
+		//if(loginAccount != null) return "redirect:/lecture/list";
 		return "/account/login";
 	}
 	
@@ -34,8 +34,6 @@ public class AccountController extends AbstractController{
 		if(!account.getPassword().equals(password)) 
 			return getFailMessage("존재하지 않는 비밀번호입니다.");
 		session.setAttribute("loginAccount", account);
-		loginAccount = account;
-		System.out.println(loginAccount.getId());
 		return getSuccessMessage();
 	}
 	

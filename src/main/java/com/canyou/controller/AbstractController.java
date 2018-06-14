@@ -3,6 +3,8 @@ package com.canyou.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -15,10 +17,9 @@ public class AbstractController {
 	
 	@Autowired
 	AccountService accountService;
+	
 	@Autowired
 	LectureDetailService lectureDetailService;
-	
-	protected AccountVO loginAccount;
 	
 	public Map<String,String> getFailMessage(String message) {
 		Map<String,String> result = new HashMap<String,String>();
@@ -31,5 +32,9 @@ public class AbstractController {
 		Map<String,String> result = new HashMap<String,String>();
 		result.put("result", "success");
 		return result;
+	}
+	
+	public AccountVO getLoginAccount(HttpSession session){
+		return (AccountVO)session.getAttribute("loginAccount");
 	}
 }
