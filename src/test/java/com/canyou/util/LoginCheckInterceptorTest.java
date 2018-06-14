@@ -17,8 +17,6 @@ import javax.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.canyou.model.Account.AccountVO;
-
 public class LoginCheckInterceptorTest {
 	
 	LoginCheckInterceptor interceptor;
