@@ -43,13 +43,14 @@ public class AccountControllerTest {
 	
 	@Test
 	public void loginGet_not_logged_Test(){
-		assertEquals("/account/login", ctrl.login());
+		doReturn(null).when(spy).getLoginAccount(session);
+		assertEquals("/account/login", spy.login(session));
 	}
 	
 	@Test
 	public void loginGet_already_login_Test(){
-		ctrl.loginAccount = mock(AccountVO.class);
-		assertEquals("redirect:/lecture/list", ctrl.login());
+		doReturn(mock(AccountVO.class)).when(spy).getLoginAccount(session);
+		assertEquals("redirect:/lecture/list", spy.login(session));
 	}
 	
 	@Test
@@ -96,7 +97,6 @@ public class AccountControllerTest {
 		Map<String,String> result = spy.login("email","password",session);
 		verify(session,times(1)).setAttribute("loginAccount", account);
 		verify(spy,times(1)).getSuccessMessage();
-		assertEquals(spy.loginAccount,account);
 		assertEquals(expect, result);
 	}
 	

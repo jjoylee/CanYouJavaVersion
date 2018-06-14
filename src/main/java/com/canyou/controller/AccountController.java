@@ -17,8 +17,8 @@ import com.canyou.model.Account.AccountVO;
 public class AccountController extends AbstractController{
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String login() {
-		//if(loginAccount != null) return "redirect:/lecture/list";
+	public String login(HttpSession session) {
+		if(getLoginAccount(session) != null) return "redirect:/lecture/list";
 		return "/account/login";
 	}
 	

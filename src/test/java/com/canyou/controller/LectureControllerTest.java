@@ -38,7 +38,7 @@ public class LectureControllerTest {
 		AccountVO account = mock(AccountVO.class);
 		List<LectureDetailVO> list = mock(List.class);
 		when(service.findByAccountId(any(Integer.class))).thenReturn(list);
-		ctrl.loginAccount = account;
+	
 		String result = ctrl.list(model);
 		verify(service, times(1)).findByAccountId(any(Integer.class));
 		verify(model,  times(1)).addAttribute("list",list);
