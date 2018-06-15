@@ -19,7 +19,12 @@
 		            </div>
 		
 		            <div class="pure-control-group">
-		                <label for="type">과목유형구분</label>
+		            	<jsp:include page="typePartial.jsp">
+							<jsp:param name="typeList" value="${typeList}"></jsp:param>
+						</jsp:include>
+
+		                <!-- <label for="type">과목유형구분</label>
+		                
 		                <select id="type" name="type">
 		                	<c:choose>
 			                    <c:when test="${typeList eq null}">
@@ -31,7 +36,7 @@
 			                        </c:forEach>
 		                        </c:otherwise>
 		                	</c:choose>
-		                </select>
+		                </select> -->
 		            </div>
 		
 		            <div class="pure-control-group">
@@ -130,7 +135,6 @@
 		
 		    $("#category").change(function () {
 		        loadtype();
-		        loadSection();
 		    });
 		
 		    $("#type").change(function () {
@@ -140,10 +144,11 @@
 		    function loadtype() {
 		        console.log("type");
 		        var categoryId = $("#category").val();
-		        var url = "/requirement/lectureTypePartial?categoryId=" + categoryId;
-		        $("#type").load(url, {},function(){
-		            loadSection();
-		        });
+		        var url = "/lecture/typePartial?categoryId=" + categoryId;
+		        $("#type").load(url);
+		        // $("#type").load(url, {},function(){
+		         //   loadSection();
+		        //});
 		    }
 		
 		    function loadSection() {

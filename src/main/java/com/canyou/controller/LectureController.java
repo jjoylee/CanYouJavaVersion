@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureDetail.LectureDetailVO;
@@ -35,5 +36,12 @@ public class LectureController extends AbstractController{
 		List<SectionVO> sectionList = sectionService.findByTypeId(typeList.get(0).getId());
 		model.addAttribute("sectionList",sectionList);
 		return "/lecture/register";
+	}
+	
+	@RequestMapping(value = "/typePartial", method = RequestMethod.GET)
+	public String typePartial(Model model, @RequestParam("categoryId") int categoryId){
+		List<LectureTypeVO> typeList = lectureTypeService.findByCategoryId(categoryId);
+        model.addAttribute("typeList",typeList);
+		return "/lecture/typePartial";
 	}
 }
