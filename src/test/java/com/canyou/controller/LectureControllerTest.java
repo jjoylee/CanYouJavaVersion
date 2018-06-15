@@ -19,36 +19,78 @@ import org.junit.Test;
 import org.springframework.ui.Model;
 
 import com.canyou.model.Account.AccountVO;
+import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureDetail.LectureDetailVO;
+import com.canyou.model.LectureType.LectureTypeVO;
+import com.canyou.model.Section.SectionVO;
+import com.canyou.service.LectureCategory.LectureCategoryService;
 import com.canyou.service.LectureDetail.LectureDetailService;
+import com.canyou.service.LectureType.LectureTypeService;
+import com.canyou.service.Section.SectionService;
 
 
-public class LectureControllerTest {
+public class LectureControllerTest extends AbstractTest{
 	
 	LectureController ctrl;
 	LectureController spy;
-	LectureDetailService service;
+	LectureDetailService detailService;
+	Model model;
+	LectureCategoryService categoryService;
+	LectureTypeService typeService;
+	SectionService sectionService;
 	
 	@Before 
 	public void setUp(){
 		ctrl = new LectureController();
-		service = mock(LectureDetailService.class);
-		ctrl.lectureDetailService = service;
+		setService();
+		ctrl.lectureDetailService = detailService;
 		spy = spy(ctrl);
+		model = mock(Model.class);
 	}
 	
+	private void setService() {
+		detailService = mock(LectureDetailService.class);
+		ctrl.lectureDetailService = detailService;
+		categoryService = mock(LectureCategoryService.class);
+		ctrl.lectureCategoryService = categoryService;
+		typeService = mock(LectureTypeService.class);
+		ctrl.lectureTypeService = typeService;
+		sectionService = mock(SectionService.class);;
+		ctrl.sectionService = sectionService;
+	}
+
 	@Test
 	public void list_test(){
-		Model model = mock(Model.class);
 		HttpSession session = mock(HttpSession.class);
 		AccountVO account = mock(AccountVO.class);
 		doReturn(account).when(spy).getLoginAccount(session);
 		when(account.getId()).thenReturn(1);
 		List<LectureDetailVO> list = mock(List.class);
-		when(service.findByAccountId(any(Integer.class))).thenReturn(list);
+		when(detailService.findByAccountId(any(Integer.class))).thenReturn(list);
 		String result = spy.list(model, session);
-		verify(service, times(1)).findByAccountId(1);
+		verify(detailService, times(1)).findByAccountId(1);
 		verify(model,  times(1)).addAttribute("list",list);
 		assertEquals("/lecture/list", result);
+	}
+	
+	@Test
+	public void register_test(){
+		List<LectureCategoryVO> categoryList = mock(List.class);
+		List<LectureTypeVO> typeList = mock(List.class);
+		List<SectionVO> sectionList = mock(List.class);
+		LectureCategoryVO category = mock(LectureCategoryVO.class);
+		LectureTypeVO type = mock(LectureTypeVO.class);
+		when(categoryService.findAll()).thenReturn(categoryList);
+		when(categoryList.get(0)).thenReturn(category);
+		when(category.getId()).thenReturn(1);
+		when(typeService.findByCategoryId(1)).thenReturn(typeList);
+		when(typeList.get(0)).thenReturn(type);
+		when(type.getId()).thenReturn(1);
+		when(sectionService.findByTypeId(1)).thenReturn(sectionList);
+		String result = ctrl.register(model);
+		verify(model,times(1)).addAttribute("categoryList",categoryList);
+		verify(model,times(1)).addAttribute("typeList",typeList);
+		verify(model,times(1)).addAttribute("sectionList", sectionList);
+		assertEquals("/lecture/register", result);
 	}
 }
