@@ -38,6 +38,9 @@ public class LectureControllerTest extends AbstractTest{
 	LectureCategoryService categoryService;
 	LectureTypeService typeService;
 	SectionService sectionService;
+	HttpSession session;
+	LectureDetailVO lectureDetail;
+	AccountVO account;
 	
 	@Before 
 	public void setUp(){
@@ -45,7 +48,10 @@ public class LectureControllerTest extends AbstractTest{
 		setService();
 		ctrl.lectureDetailService = detailService;
 		spy = spy(ctrl);
+		session = mock(HttpSession.class);
 		model = mock(Model.class);
+		lectureDetail = mock(LectureDetailVO.class);
+		account = mock(AccountVO.class);
 	}
 	
 	private void setService() {
@@ -63,7 +69,7 @@ public class LectureControllerTest extends AbstractTest{
 	public void list_test(){
 		HttpSession session = mock(HttpSession.class);
 		AccountVO account = mock(AccountVO.class);
-		doReturn(account).when(spy).getLoginAccount(session);
+		doReturn(account).when(spy).loginAccount(session);
 		when(account.getId()).thenReturn(1);
 		List<LectureDetailVO> list = mock(List.class);
 		when(detailService.findByAccountId(any(Integer.class))).thenReturn(list);
@@ -112,5 +118,21 @@ public class LectureControllerTest extends AbstractTest{
 		verify(sectionService, times(1)).findByTypeId(any(Integer.class));
 		verify(model, times(1)).addAttribute("sectionList",sectionList);
 		assertEquals("/lecture/sectionPartial",result);
+	}
+	
+	@Test 
+	public void lectureDetail_already_exist_test(){
+		when(spy.loginAccount(session)).thenReturn(account);
+		when(account.getId()).thenReturn(1);
+		when(detailService.findByAccountAndTitle(any(Integer.class), any(String.class))).thenReturn(lectureDetail);
+		assertTrue(ctrl.existLectureDetail("title", session));
+	}
+	
+	@Test 
+	public void lectureDetail_not_exist_test(){
+		when(spy.loginAccount(session)).thenReturn(account);
+		when(account.getId()).thenReturn(1);
+		when(detailService.findByAccountAndTitle(any(Integer.class), any(String.class))).thenReturn(null);
+		assertFalse(ctrl.existLectureDetail("title", session));
 	}
 }

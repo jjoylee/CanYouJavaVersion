@@ -1,6 +1,7 @@
 package com.canyou.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -9,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureDetail.LectureDetailVO;
@@ -21,7 +23,7 @@ public class LectureController extends AbstractController{
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String list(Model model, HttpSession session){
-		int accountId = getLoginAccount(session).getId();
+		int accountId = loginAccount(session).getId();
 		List<LectureDetailVO> list = lectureDetailService.findByAccountId(accountId);
 		model.addAttribute("list",list);
 		return "/lecture/list";
@@ -38,6 +40,12 @@ public class LectureController extends AbstractController{
 		return "/lecture/register";
 	}
 	
+	@RequestMapping(value="/register", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> registerd(LectureDetailVO lectureDetail){
+		return getSuccessMessage();
+	}
+	
 	@RequestMapping(value = "/typePartial")
 	public String typePartial(Model model, @RequestParam("categoryId") int categoryId){
 		List<LectureTypeVO> typeList = lectureTypeService.findByCategoryId(categoryId);
@@ -50,5 +58,10 @@ public class LectureController extends AbstractController{
 		List<SectionVO> sectionList = sectionService.findByTypeId(typeId);
 		model.addAttribute("sectionList",sectionList);
 		return "/lecture/sectionPartial";
+	}
+	
+	public boolean existLectureDetail(String title,HttpSession session){
+		LectureDetailVO lectureDetail = lectureDetailService.findByAccountAndTitle(loginAccount(session).getId(), title);
+		return (lectureDetail != null);
 	}
 }

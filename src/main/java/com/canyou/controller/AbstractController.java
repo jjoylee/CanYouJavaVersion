@@ -46,7 +46,7 @@ public class AbstractController {
 		return result;
 	}
 	
-	public AccountVO getLoginAccount(HttpSession session){
+	public AccountVO loginAccount(HttpSession session){
 		return (AccountVO)session.getAttribute("loginAccount");
 	}
 }

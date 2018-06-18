@@ -43,13 +43,13 @@ public class AccountControllerTest {
 	
 	@Test
 	public void loginGet_not_logged_Test(){
-		doReturn(null).when(spy).getLoginAccount(session);
+		doReturn(null).when(spy).loginAccount(session);
 		assertEquals("/account/login", spy.login(session));
 	}
 	
 	@Test
 	public void loginGet_already_login_Test(){
-		doReturn(mock(AccountVO.class)).when(spy).getLoginAccount(session);
+		doReturn(mock(AccountVO.class)).when(spy).loginAccount(session);
 		assertEquals("redirect:/lecture/list", spy.login(session));
 	}
 	

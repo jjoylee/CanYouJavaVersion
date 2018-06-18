@@ -18,7 +18,7 @@ public class AccountController extends AbstractController{
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login(HttpSession session) {
-		if(getLoginAccount(session) != null) return "redirect:/lecture/list";
+		if(loginAccount(session) != null) return "redirect:/lecture/list";
 		return "/account/login";
 	}
 	

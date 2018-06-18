@@ -43,7 +43,7 @@ public class AbstractControllerTest {
 		HttpSession session = mock(HttpSession.class);
 		AccountVO account = mock(AccountVO.class);
 		when(session.getAttribute("loginAccount")).thenReturn(account);
-		AccountVO result = ctrl.getLoginAccount(session);
+		AccountVO result = ctrl.loginAccount(session);
 		verify(session, times(1)).getAttribute("loginAccount");
 		assertEquals(account,result);
 	}
