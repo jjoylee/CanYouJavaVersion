@@ -22,37 +22,12 @@
 		            	<jsp:include page="typePartial.jsp">
 							<jsp:param name="typeList" value="${typeList}"></jsp:param>
 						</jsp:include>
-
-		                <!-- <label for="type">과목유형구분</label>
-		                
-		                <select id="type" name="type">
-		                	<c:choose>
-			                    <c:when test="${typeList eq null}">
-			                          <option value="0">구분없음</option>
-			                    </c:when>
-			                    <c:otherwise>
-				                    <c:forEach items="${typeList}" var="type">
-			                            <option value="${type.id}">${type.name}</option>
-			                        </c:forEach>
-		                        </c:otherwise>
-		                	</c:choose>
-		                </select> -->
 		            </div>
 		
 		            <div class="pure-control-group">
-		                <label for="section">영역</label>
-		                <select id="section" name="section">
-		                    <c:choose>
-			                    <c:when test="${empty sectionList}">
-		                        	<option value="0">구분없음</option>
-		                    	</c:when>
-			                    <c:otherwise>
-			                    	<c:forEach items="${sectionList}" var="section">
-		                            	<option value="${section.id}">${section.name}</option>
-		                            </c:forEach>
-		                        </c:otherwise>
-		                    </c:choose>
-		                </select>
+		                <jsp:include page="sectionPartial.jsp">
+							<jsp:param name="sectionList" value="${sectionList}"></jsp:param>
+						</jsp:include>
 		            </div>
 		
 		
@@ -145,10 +120,9 @@
 		        console.log("type");
 		        var categoryId = $("#category").val();
 		        var url = "/lecture/typePartial?categoryId=" + categoryId;
-		        $("#type").load(url);
-		        // $("#type").load(url, {},function(){
-		         //   loadSection();
-		        //});
+		        $("#type").load(url, {},function(){
+		        	loadSection();
+		        });
 		    }
 		
 		    function loadSection() {
