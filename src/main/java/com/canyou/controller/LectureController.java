@@ -38,10 +38,17 @@ public class LectureController extends AbstractController{
 		return "/lecture/register";
 	}
 	
-	@RequestMapping(value = "/typePartial", method = RequestMethod.GET)
+	@RequestMapping(value = "/typePartial")
 	public String typePartial(Model model, @RequestParam("categoryId") int categoryId){
 		List<LectureTypeVO> typeList = lectureTypeService.findByCategoryId(categoryId);
         model.addAttribute("typeList",typeList);
 		return "/lecture/typePartial";
+	}
+	
+	@RequestMapping(value="/sectionPartial")
+	public String sectionPartial(Model model, @RequestParam("typeId") int typeId){
+		List<SectionVO> sectionList = sectionService.findByTypeId(typeId);
+		model.addAttribute("sectionList",sectionList);
+		return "/lecture/sectionPartial";
 	}
 }
