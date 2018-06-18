@@ -93,4 +93,14 @@ public class LectureControllerTest extends AbstractTest{
 		verify(model,times(1)).addAttribute("sectionList", sectionList);
 		assertEquals("/lecture/register", result);
 	}
+	
+	@Test
+	public void typePartial_test(){
+		List<LectureTypeVO> typeList = mock(List.class);
+		when(typeService.findByCategoryId(any(Integer.class))).thenReturn(typeList);
+		String result = ctrl.typePartial(model, 1);
+		verify(typeService, times(1)).findByCategoryId(any(Integer.class));
+		verify(model, times(1)).addAttribute("typeList",typeList);
+		assertEquals("/lecture/typePartial",result);
+	}
 }
