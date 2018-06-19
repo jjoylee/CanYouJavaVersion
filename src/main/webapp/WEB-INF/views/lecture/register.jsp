@@ -54,6 +54,7 @@
 		</div>
 	</layout:put>
 	<layout:put block="scripts">
+		<script src="../resources/scripts/customValidator.js"></script>
 	    <script type="text/javascript">
 		    $("#frmLectureRegister").validate({
 		        rules: {
@@ -87,7 +88,6 @@
 		
 		    $("#registerBtn").click(function () {
 		        if (!$("#frmLectureRegister").valid()) return;
-		
 		        $("#frmLectureRegister").ajaxForm({
 		            success: function (data, statusText, xhr, $form) {
 		                if (data.result == 'fail') {

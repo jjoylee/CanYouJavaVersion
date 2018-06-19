@@ -65,8 +65,7 @@ public class LectureControllerTest extends AbstractTest{
 	@Test
 	public void list_test(){
 		System.out.println(detailService.toString());
-		doReturn(account).when(spy).loginAccount(session);
-		when(account.getId()).thenReturn(1);
+		doReturn(1).when(spy).loginId(session);
 		List<LectureDetailVO> list = mock(List.class);
 		when(detailService.findByAccountId(any(Integer.class))).thenReturn(list);
 		String result = spy.list(model, session);
@@ -124,12 +123,14 @@ public class LectureControllerTest extends AbstractTest{
 	public void register_exception_test(){
 		when(lectureDetail.getName()).thenReturn("title");
 		doReturn(false).when(spy).existLectureDetail("title", session);
+		doReturn(1).when(spy).loginId(session);
 		DataAccessException exception = mock(DataAccessException.class);
 		when(exception.getMessage()).thenReturn("데이터 에러");
 		when(detailService.insert(lectureDetail)).thenThrow(exception);
 		Map<String, String> expect = mock(Map.class);
 		doReturn(expect).when(spy).getFailMessage("데이터 에러");
 		Map<String, String> result = spy.register(lectureDetail, session);
+		verify(lectureDetail, times(1)).setAccountId(1);
 		verify(spy, times(1)).getFailMessage("데이터 에러");
 		assertEquals(expect, result);
 	}
@@ -156,17 +157,20 @@ public class LectureControllerTest extends AbstractTest{
 	
 	@Test 
 	public void lectureDetail_already_exist_test(){
-		doReturn(account).when(spy).loginAccount(session);
-		when(account.getId()).thenReturn(1);
+		doReturn(1).when(spy).loginId(session);
 		when(detailService.findByAccountAndTitle(any(Integer.class), any(String.class))).thenReturn(lectureDetail);
 		assertTrue(spy.existLectureDetail("title", session));
 	}
 	
 	@Test 
 	public void lectureDetail_not_exist_test(){
-		doReturn(account).when(spy).loginAccount(session);
-		when(account.getId()).thenReturn(1);
+		doReturn(1).when(spy).loginId(session);
 		when(detailService.findByAccountAndTitle(any(Integer.class), any(String.class))).thenReturn(null);
 		assertFalse(spy.existLectureDetail("title", session));
+	}
+	
+	@Test
+	public void delete_lecture_test(){
+		
 	}
 }

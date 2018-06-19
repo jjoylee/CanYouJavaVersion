@@ -47,4 +47,15 @@ public class AbstractControllerTest {
 		verify(session, times(1)).getAttribute("loginAccount");
 		assertEquals(account,result);
 	}
+	
+	@Test 
+	public void getLoginId_Test(){
+		HttpSession session = mock(HttpSession.class);
+		AccountVO account = mock(AccountVO.class);
+		when(session.getAttribute("loginAccount")).thenReturn(account);
+		when(account.getId()).thenReturn(1);
+		int result = ctrl.loginId(session);
+		verify(session, times(1)).getAttribute("loginAccount");
+		assertEquals(1,result);
+	}
 }

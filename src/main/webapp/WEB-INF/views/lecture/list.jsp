@@ -24,25 +24,23 @@
 		        </thead>
 		
 		        <tbody>
-		           <!--@foreach (CanYou.Models.Info.LectureDetail.LectureDetailItem item in ViewBag.list)
-		           {
-		               <tr>
-		                <td>@(startNum++)</td>
-		                <td>@item.LectureCategoryName</td>
-		                <td>@item.LectureTypeName</td>
-		                <td>@item.SectionName</td>
-		                <td>@item.Credit</td>
-		                <td>@item.Score</td>
-		                <td>@item.Name</td>
-		                <td>
-		                    <button class="pure-button button-xsmall" name="update" data-id="@item.Id">수정</button> 
-		                </td>
-		                <td>
-		                    <button class="pure-button button-xsmall" name="delete" data-id="@item.Id">삭제</button> 
-		                </td>
-		            </tr>
-		           }
-		           -->
+		        	<c:forEach items="${list}" var="item" varStatus="status">
+		            	<tr>
+		            		<td>${status.count}</td>
+		                	<td>${item.lectureCategoryName}</td>
+		                	<td>${item.lectureTypeName}</td>
+		                	<td>${item.sectionName}</td>
+		                	<td>${item.credit}</td>
+		                	<td>${item.score}</td>
+		                	<td>${item.name}</td>
+		                	<td>
+		                    	<button class="pure-button button-xsmall" name="update" data-id="${item.id}">수정</button> 
+		               		</td>
+		                	<td>
+		                    	<button class="pure-button button-xsmall" name="delete" data-id="${item.id}">삭제</button> 
+		                	</td>
+		            	</tr>
+		           </c:forEach>
 		        </tbody>
 		    </table>
     		<p></p>
@@ -78,7 +76,7 @@
 
 	        $("button[name='delete']").click(function () {
 	            var id = $(this).data("id");
-	            var url = "/Lecture/LectureDelete/" + id;
+	            var url = "/lecture/delete/" + id;
 	            $.getJSON(url, function (data) {
 	                if (data.result == 'fail') {
 	                    alert(data.message);

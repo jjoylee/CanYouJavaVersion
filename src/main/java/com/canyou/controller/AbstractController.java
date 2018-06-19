@@ -11,6 +11,7 @@ import com.canyou.model.Account.AccountVO;
 
 @Controller
 public class AbstractController {
+	
 	public Map<String,String> getFailMessage(String message) {
 		Map<String,String> result = new HashMap<String,String>();
 		result.put("result", "fail");
@@ -26,5 +27,9 @@ public class AbstractController {
 	
 	public AccountVO loginAccount(HttpSession session){
 		return (AccountVO)session.getAttribute("loginAccount");
+	}
+	
+	public int loginId(HttpSession session){
+		return ((AccountVO)session.getAttribute("loginAccount")).getId();
 	}
 }

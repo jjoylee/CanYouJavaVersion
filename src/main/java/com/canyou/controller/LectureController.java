@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,7 +41,7 @@ public class LectureController extends AbstractController{
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String list(Model model, HttpSession session){
-		int accountId = loginAccount(session).getId();
+		int accountId = loginId(session);
 		List<LectureDetailVO> list = lectureDetailService.findByAccountId(accountId);
 		model.addAttribute("list",list);
 		return "/lecture/list";
@@ -60,11 +61,10 @@ public class LectureController extends AbstractController{
 	@RequestMapping(value="/register", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,String> register(LectureDetailVO lectureDetail, HttpSession session){
-		System.out.println(existLectureDetail(lectureDetail.getName(), session));
 		if(existLectureDetail(lectureDetail.getName(), session))
 			return getFailMessage("이미 존재합니다.");
-		
 		try{
+			lectureDetail.setAccountId(loginId(session));
 			lectureDetailService.insert(lectureDetail);
 			return getSuccessMessage(); 
 		}catch(Exception e){
@@ -86,8 +86,14 @@ public class LectureController extends AbstractController{
 		return "/lecture/sectionPartial";
 	}
 	
+	@RequestMapping("/delete/{id}") 
+	@ResponseBody
+	public Map<String,String> delete(@PathVariable int id){
+		return getSueccessMessage();
+	}
+	
 	public boolean existLectureDetail(String title,HttpSession session){
-		LectureDetailVO lectureDetail = lectureDetailService.findByAccountAndTitle(loginAccount(session).getId(), title);
+		LectureDetailVO lectureDetail = lectureDetailService.findByAccountAndTitle(loginId(session), title);
 		return (lectureDetail != null);
 	}
 }
