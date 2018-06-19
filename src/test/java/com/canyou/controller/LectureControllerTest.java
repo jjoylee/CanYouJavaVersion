@@ -45,6 +45,7 @@ public class LectureControllerTest extends AbstractTest{
 	LectureDetailVO lectureDetail;
 	AccountVO account;
 	Map<String, String> expect;
+	DataAccessException exception;
 	
 	@Before 
 	public void setUp() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
@@ -61,6 +62,12 @@ public class LectureControllerTest extends AbstractTest{
 		ctrl.lectureCategoryService = categoryService;
 		ctrl.lectureTypeService = typeService;
 		ctrl.sectionService = sectionService;
+	}
+	
+	private void setException(){
+		exception = mock(DataAccessException.class);
+		when(exception.getMessage()).thenReturn("데이터 에러");
+		doReturn(expect).when(spy).getFailMessage("데이터 에러");
 	}
 
 	@Test
@@ -122,11 +129,8 @@ public class LectureControllerTest extends AbstractTest{
 		when(lectureDetail.getName()).thenReturn("title");
 		doReturn(false).when(spy).existLectureDetail("title", session);
 		doReturn(1).when(spy).loginId(session);
-		DataAccessException exception = mock(DataAccessException.class);
-		when(exception.getMessage()).thenReturn("데이터 에러");
+		setException();
 		when(detailService.insert(lectureDetail)).thenThrow(exception);
-		Map<String, String> expect = mock(Map.class);
-		doReturn(expect).when(spy).getFailMessage("데이터 에러");
 		Map<String, String> result = spy.register(lectureDetail, session);
 		verify(lectureDetail, times(1)).setAccountId(1);
 		verify(spy, times(1)).getFailMessage("데이터 에러");
@@ -178,10 +182,8 @@ public class LectureControllerTest extends AbstractTest{
 	
 	@Test
 	public void delete_lecture_exception_test(){
-		DataAccessException exception = mock(DataAccessException.class);
-		when(exception.getMessage()).thenReturn("데이터 에러");
+		setException();
 		when(detailService.delete(1)).thenThrow(exception);
-		doReturn(expect).when(spy).getFailMessage("데이터 에러");
 		Map<String, String> result = spy.delete(1);
 		verify(spy,times(1)).getFailMessage("데이터 에러");
 		assertEquals(expect, result);
