@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"  pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <label for="type">과목유형구분</label>
-<select id="type" name="type">
+<select id="type" name="lectureTypeId">
 	<c:choose>
 		<c:when test="${empty typeList}">
 			<option value="0">구분없음</option>

@@ -11,7 +11,7 @@
 		        <fieldset>
 		            <div class="pure-control-group">
 		                <label for="category">과목구분</label>
-		                <select id="category" name="category" required>
+		                <select id="category" name="lectureCategoryId" required>
 		                    <c:forEach items="${categoryList}" var="category">
 		                        <option value="${category.id}">${category.name}</option>
 		                    </c:forEach>
@@ -42,8 +42,8 @@
 		            </div>
 		
 		            <div class="pure-control-group">
-		                <label for="title">교과목명</label>
-		                <input id="title" name="title" type="text" placeholder="교과목명을 입력하세요." required>
+		                <label for="name">교과목명</label>
+		                <input id="name" name="name" type="text" placeholder="교과목명을 입력하세요." required>
 		            </div>
 		            <div class="pure-controls">
 		                <button class="pure-button pure-button-primary" id="registerBtn">등록</button>
@@ -93,6 +93,7 @@
 		                if (data.result == 'fail') {
 		                    alert(data.message);
 		                } else {
+		                	console.log("success");
 		                    $(location).attr('href', "/lecture/list");
 		                }
 		            },
@@ -117,7 +118,6 @@
 		    });
 		
 		    function loadtype() {
-		        console.log("type");
 		        var categoryId = $("#category").val();
 		        var url = "/lecture/typePartial?categoryId=" + categoryId;
 		        $("#type").load(url, {},function(){
@@ -126,7 +126,6 @@
 		    }
 		
 		    function loadSection() {
-		        console.log("section");
 		        var typeId = $("#type").val();
 		        var url = "/lecture/sectionPartial?typeId=" + typeId;
 		        $("#section").load(url);

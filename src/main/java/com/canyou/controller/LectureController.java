@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +17,26 @@ import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureDetail.LectureDetailVO;
 import com.canyou.model.LectureType.LectureTypeVO;
 import com.canyou.model.Section.SectionVO;
+import com.canyou.service.LectureCategory.LectureCategoryService;
+import com.canyou.service.LectureDetail.LectureDetailService;
+import com.canyou.service.LectureType.LectureTypeService;
+import com.canyou.service.Section.SectionService;
 
 @Controller
 @RequestMapping("/lecture")
 public class LectureController extends AbstractController{
+	
+	@Autowired
+	LectureDetailService lectureDetailService;
+	
+	@Autowired
+	LectureCategoryService lectureCategoryService;
+	
+	@Autowired
+	LectureTypeService lectureTypeService;
+	
+	@Autowired
+	SectionService sectionService;
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String list(Model model, HttpSession session){
@@ -42,8 +59,17 @@ public class LectureController extends AbstractController{
 	
 	@RequestMapping(value="/register", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,String> registerd(LectureDetailVO lectureDetail){
-		return getSuccessMessage();
+	public Map<String,String> register(LectureDetailVO lectureDetail, HttpSession session){
+		System.out.println(existLectureDetail(lectureDetail.getName(), session));
+		if(existLectureDetail(lectureDetail.getName(), session))
+			return getFailMessage("이미 존재합니다.");
+		
+		try{
+			lectureDetailService.insert(lectureDetail);
+			return getSuccessMessage(); 
+		}catch(Exception e){
+			return getFailMessage(e.getMessage());
+		}
 	}
 	
 	@RequestMapping(value = "/typePartial")

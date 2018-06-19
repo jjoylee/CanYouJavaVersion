@@ -8,7 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -16,6 +18,7 @@ import static org.mockito.Mockito.spy;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.dao.DataAccessException;
 import org.springframework.ui.Model;
 
 import com.canyou.model.Account.AccountVO;
@@ -43,32 +46,25 @@ public class LectureControllerTest extends AbstractTest{
 	AccountVO account;
 	
 	@Before 
-	public void setUp(){
+	public void setUp() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
 		ctrl = new LectureController();
+		MockGenerator.setMock(this);
 		setService();
-		ctrl.lectureDetailService = detailService;
 		spy = spy(ctrl);
-		session = mock(HttpSession.class);
-		model = mock(Model.class);
 		lectureDetail = mock(LectureDetailVO.class);
 		account = mock(AccountVO.class);
 	}
 	
 	private void setService() {
-		detailService = mock(LectureDetailService.class);
 		ctrl.lectureDetailService = detailService;
-		categoryService = mock(LectureCategoryService.class);
 		ctrl.lectureCategoryService = categoryService;
-		typeService = mock(LectureTypeService.class);
 		ctrl.lectureTypeService = typeService;
-		sectionService = mock(SectionService.class);;
 		ctrl.sectionService = sectionService;
 	}
 
 	@Test
 	public void list_test(){
-		HttpSession session = mock(HttpSession.class);
-		AccountVO account = mock(AccountVO.class);
+		System.out.println(detailService.toString());
 		doReturn(account).when(spy).loginAccount(session);
 		when(account.getId()).thenReturn(1);
 		List<LectureDetailVO> list = mock(List.class);
@@ -80,7 +76,7 @@ public class LectureControllerTest extends AbstractTest{
 	}
 	
 	@Test
-	public void register_test(){
+	public void registerGET_test(){
 		List<LectureCategoryVO> categoryList = mock(List.class);
 		List<LectureTypeVO> typeList = mock(List.class);
 		List<SectionVO> sectionList = mock(List.class);
@@ -98,6 +94,44 @@ public class LectureControllerTest extends AbstractTest{
 		verify(model,times(1)).addAttribute("typeList",typeList);
 		verify(model,times(1)).addAttribute("sectionList", sectionList);
 		assertEquals("/lecture/register", result);
+	}
+	
+	@Test
+	public void register_already_exist_lecture_test(){
+		when(lectureDetail.getName()).thenReturn("title");
+		doReturn(true).when(spy).existLectureDetail("title", session);
+		Map<String, String> expect = mock(Map.class);
+		doReturn(expect).when(spy).getFailMessage("이미 존재합니다.");
+		Map<String, String> result = spy.register(lectureDetail, session);
+		verify(spy, times(1)).getFailMessage("이미 존재합니다.");
+		assertEquals(expect, result);
+	}
+	
+	@Test
+	public void register_success_test(){
+		when(lectureDetail.getName()).thenReturn("title");
+		doReturn(false).when(spy).existLectureDetail("title", session);
+		Map<String, String> expect = mock(Map.class);
+		doReturn(expect).when(spy).getSuccessMessage();
+		when(spy.loginAccount(session)).thenReturn(account);
+		Map<String, String> result = spy.register(lectureDetail, session);
+		verify(detailService,times(1)).insert(lectureDetail);
+		verify(spy, times(1)).getSuccessMessage();
+		assertEquals(expect, result);
+	}
+	
+	@Test
+	public void register_exception_test(){
+		when(lectureDetail.getName()).thenReturn("title");
+		doReturn(false).when(spy).existLectureDetail("title", session);
+		DataAccessException exception = mock(DataAccessException.class);
+		when(exception.getMessage()).thenReturn("데이터 에러");
+		when(detailService.insert(lectureDetail)).thenThrow(exception);
+		Map<String, String> expect = mock(Map.class);
+		doReturn(expect).when(spy).getFailMessage("데이터 에러");
+		Map<String, String> result = spy.register(lectureDetail, session);
+		verify(spy, times(1)).getFailMessage("데이터 에러");
+		assertEquals(expect, result);
 	}
 	
 	@Test
@@ -122,17 +156,17 @@ public class LectureControllerTest extends AbstractTest{
 	
 	@Test 
 	public void lectureDetail_already_exist_test(){
-		when(spy.loginAccount(session)).thenReturn(account);
+		doReturn(account).when(spy).loginAccount(session);
 		when(account.getId()).thenReturn(1);
 		when(detailService.findByAccountAndTitle(any(Integer.class), any(String.class))).thenReturn(lectureDetail);
-		assertTrue(ctrl.existLectureDetail("title", session));
+		assertTrue(spy.existLectureDetail("title", session));
 	}
 	
 	@Test 
 	public void lectureDetail_not_exist_test(){
-		when(spy.loginAccount(session)).thenReturn(account);
+		doReturn(account).when(spy).loginAccount(session);
 		when(account.getId()).thenReturn(1);
 		when(detailService.findByAccountAndTitle(any(Integer.class), any(String.class))).thenReturn(null);
-		assertFalse(ctrl.existLectureDetail("title", session));
+		assertFalse(spy.existLectureDetail("title", session));
 	}
 }
