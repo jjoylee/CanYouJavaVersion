@@ -89,7 +89,12 @@ public class LectureController extends AbstractController{
 	@RequestMapping("/delete/{id}") 
 	@ResponseBody
 	public Map<String,String> delete(@PathVariable int id){
-		return getSueccessMessage();
+		try{
+			lectureDetailService.delete(id);
+			return getSuccessMessage();
+		}catch(Exception e){
+			return getFailMessage(e.getMessage());
+		}
 	}
 	
 	public boolean existLectureDetail(String title,HttpSession session){

@@ -44,6 +44,7 @@ public class LectureControllerTest extends AbstractTest{
 	HttpSession session;
 	LectureDetailVO lectureDetail;
 	AccountVO account;
+	Map<String, String> expect;
 	
 	@Before 
 	public void setUp() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
@@ -64,7 +65,6 @@ public class LectureControllerTest extends AbstractTest{
 
 	@Test
 	public void list_test(){
-		System.out.println(detailService.toString());
 		doReturn(1).when(spy).loginId(session);
 		List<LectureDetailVO> list = mock(List.class);
 		when(detailService.findByAccountId(any(Integer.class))).thenReturn(list);
@@ -99,7 +99,6 @@ public class LectureControllerTest extends AbstractTest{
 	public void register_already_exist_lecture_test(){
 		when(lectureDetail.getName()).thenReturn("title");
 		doReturn(true).when(spy).existLectureDetail("title", session);
-		Map<String, String> expect = mock(Map.class);
 		doReturn(expect).when(spy).getFailMessage("이미 존재합니다.");
 		Map<String, String> result = spy.register(lectureDetail, session);
 		verify(spy, times(1)).getFailMessage("이미 존재합니다.");
@@ -110,7 +109,6 @@ public class LectureControllerTest extends AbstractTest{
 	public void register_success_test(){
 		when(lectureDetail.getName()).thenReturn("title");
 		doReturn(false).when(spy).existLectureDetail("title", session);
-		Map<String, String> expect = mock(Map.class);
 		doReturn(expect).when(spy).getSuccessMessage();
 		when(spy.loginAccount(session)).thenReturn(account);
 		Map<String, String> result = spy.register(lectureDetail, session);
@@ -170,7 +168,22 @@ public class LectureControllerTest extends AbstractTest{
 	}
 	
 	@Test
-	public void delete_lecture_test(){
-		
+	public void delete_lecture_success_test(){
+		doReturn(expect).when(spy).getSuccessMessage();
+		Map<String, String> result = spy.delete(1);
+		verify(detailService,times(1)).delete(1);
+		verify(spy,times(1)).getSuccessMessage();
+		assertEquals(expect, result);
+	}
+	
+	@Test
+	public void delete_lecture_exception_test(){
+		DataAccessException exception = mock(DataAccessException.class);
+		when(exception.getMessage()).thenReturn("데이터 에러");
+		when(detailService.delete(1)).thenThrow(exception);
+		doReturn(expect).when(spy).getFailMessage("데이터 에러");
+		Map<String, String> result = spy.delete(1);
+		verify(spy,times(1)).getFailMessage("데이터 에러");
+		assertEquals(expect, result);
 	}
 }

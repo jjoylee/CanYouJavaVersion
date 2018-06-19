@@ -14,7 +14,6 @@ public class MockGenerator {
 				Class fieldClass= field.getType();
 				Object mockObj = mock(field.getType());
 				field.set(object, mockObj);
-				System.out.println(mockObj.toString());
 			}
 //			if(field.isAnnotationPresent(Autowired.class)){
 //				Class fieldClass= field.getType();
