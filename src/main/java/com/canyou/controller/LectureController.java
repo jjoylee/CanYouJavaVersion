@@ -49,13 +49,27 @@ public class LectureController extends AbstractController{
 	
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String register(Model model){
+		List<LectureCategoryVO> categoryList = sendCategoryListToView(model);
+		List<LectureTypeVO> typeList = sendTypeListToView(model, categoryList, 0);
+		sendSectionListToView(model, typeList, 0);
+		return "/lecture/register";
+	}
+
+	public void sendSectionListToView(Model model, List<LectureTypeVO> typeList,int index) {
+		List<SectionVO> sectionList = sectionService.findByTypeId(typeList.get(index).getId());
+		model.addAttribute("sectionList",sectionList);
+	}
+
+	public List<LectureTypeVO> sendTypeListToView(Model model, List<LectureCategoryVO> categoryList, int index) {
+		List<LectureTypeVO> typeList = lectureTypeService.findByCategoryId(categoryList.get(index).getId());
+		model.addAttribute("typeList", typeList);
+		return typeList;
+	}
+
+	public List<LectureCategoryVO> sendCategoryListToView(Model model) {
 		List<LectureCategoryVO> categoryList = lectureCategoryService.findAll();
 		model.addAttribute("categoryList", categoryList);
-		List<LectureTypeVO> typeList = lectureTypeService.findByCategoryId(categoryList.get(0).getId());
-		model.addAttribute("typeList", typeList);
-		List<SectionVO> sectionList = sectionService.findByTypeId(typeList.get(0).getId());
-		model.addAttribute("sectionList",sectionList);
-		return "/lecture/register";
+		return categoryList;
 	}
 	
 	@RequestMapping(value="/register", method = RequestMethod.POST)
@@ -86,7 +100,7 @@ public class LectureController extends AbstractController{
 		return "/lecture/sectionPartial";
 	}
 	
-	@RequestMapping("/delete/{id}") 
+	@RequestMapping(value = "/delete/{id}") 
 	@ResponseBody
 	public Map<String,String> delete(@PathVariable int id){
 		try{
@@ -95,6 +109,13 @@ public class LectureController extends AbstractController{
 		}catch(Exception e){
 			return getFailMessage(e.getMessage());
 		}
+	}
+	
+	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET) 
+	public String update(@PathVariable int id, Model model){
+		LectureDetailVO lectureDetail = lectureDetailService.findById(1);
+		model.addAttribute("lectureDetail", lectureDetail);
+		return "/lecture/update";
 	}
 	
 	public boolean existLectureDetail(String title,HttpSession session){
