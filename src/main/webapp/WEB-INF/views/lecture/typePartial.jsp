@@ -8,7 +8,9 @@
 		</c:when>
 		<c:otherwise>
 			<c:forEach items="${typeList}" var="type">
-					<option value="${type.id}">${type.name}</option>
+					<option value="${type.id}" <c:if test="${type.id eq lectureDetail.lectureTypeId}">selected</c:if>>
+						${type.name}
+					</option>
 			</c:forEach>
 		</c:otherwise>
 	</c:choose>

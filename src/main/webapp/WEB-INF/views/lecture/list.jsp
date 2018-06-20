@@ -88,7 +88,7 @@
 
 	        $("button[name='update']").click(function () {
 	            var id = $(this).data("id");
-	            var url = "/lecture/update/" + id;
+	            var url = "/lecture/update?id=" + id;
 	            $(location).attr('href', url);
 	        });
 	    });

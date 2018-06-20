@@ -53,15 +53,10 @@ public class LectureControllerTest extends AbstractTest{
 	
 	@Before 
 	public void setUp() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		ctrl = new LectureController();
 		MockGenerator.setMock(this);
+		ctrl = new LectureController();
 		setService();
 		spy = spy(ctrl);
-		lectureDetail = mock(LectureDetailVO.class);
-		account = mock(AccountVO.class);
-		typeList = mock(List.class);
-		categoryList = mock(List.class);
-		
 	}
 	
 	private void setService() {
@@ -90,11 +85,15 @@ public class LectureControllerTest extends AbstractTest{
 	
 	@Test
 	public void registerGET_test(){
-		List<SectionVO> sectionList = mock(List.class);
+		LectureCategoryVO category = mock(LectureCategoryVO.class);
 		LectureTypeVO type = mock(LectureTypeVO.class);
 		doReturn(categoryList).when(spy).sendCategoryListToView(model);
-		doReturn(typeList).when(spy).sendTypeListToView(model, categoryList, 0);
-		doNothing().when(spy).sendSectionListToView(model, typeList, 0);
+		when(categoryList.get(0)).thenReturn(category);
+		when(category.getId()).thenReturn(0);
+		when(typeList.get(0)).thenReturn(type);
+		when(type.getId()).thenReturn(0);
+		doReturn(typeList).when(spy).sendTypeListToView(model, 0);
+		doNothing().when(spy).sendSectionListToView(model, 0);
 		String result = spy.register(model);
 		assertEquals("/lecture/register", result);
 	}
@@ -102,21 +101,15 @@ public class LectureControllerTest extends AbstractTest{
 	@Test
 	public void sendSectionListToView_test(){
 		List<SectionVO> sectionList = mock(List.class);
-		LectureTypeVO type = mock(LectureTypeVO.class);
-		when(typeList.get(0)).thenReturn(type);
-		when(type.getId()).thenReturn(1);
-		when(sectionService.findByTypeId(1)).thenReturn(sectionList);
-		ctrl.sendSectionListToView(model,typeList,0);
+		when(sectionService.findByTypeId(0)).thenReturn(sectionList);
+		ctrl.sendSectionListToView(model,0);
 		verify(model,times(1)).addAttribute("sectionList", sectionList);
 	}
 	
 	@Test
 	public void sendTypeListToView_test(){
-		LectureCategoryVO category = mock(LectureCategoryVO.class);
-		when(categoryList.get(0)).thenReturn(category);
-		when(category.getId()).thenReturn(1);
-		when(typeService.findByCategoryId(1)).thenReturn(typeList);
-		List<LectureTypeVO> result = ctrl.sendTypeListToView(model,categoryList,0);
+		when(typeService.findByCategoryId(0)).thenReturn(typeList);
+		List<LectureTypeVO> result = ctrl.sendTypeListToView(model,0);
 		verify(model,times(1)).addAttribute("typeList", typeList);
 		assertEquals(result, typeList);
 	}
@@ -219,9 +212,17 @@ public class LectureControllerTest extends AbstractTest{
 	@Test
 	public void update_lecture_get_test(){
 		when(detailService.findById(any(Integer.class))).thenReturn(lectureDetail);
-		String result = ctrl.update(1, model);
+		doReturn(categoryList).when(spy).sendCategoryListToView(model);
+		when(lectureDetail.getLectureCategoryId()).thenReturn(1);
+		when(lectureDetail.getLectureTypeId()).thenReturn(2);
+		doReturn(typeList).when(spy).sendTypeListToView(model,1);
+		doNothing().when(spy).sendSectionListToView(model,2);
+		String result = spy.update(1, model);
 		verify(detailService,times(1)).findById(any(Integer.class));
 		verify(model,times(1)).addAttribute("lectureDetail", lectureDetail);
+		verify(spy,times(1)).sendCategoryListToView(model);
+		verify(spy,times(1)).sendTypeListToView(model, 1);
+		verify(spy,times(1)).sendSectionListToView(model, 2);
 		assertEquals("/lecture/update", result);
 	}
 }

@@ -8,8 +8,11 @@
 		</c:when>
 		<c:otherwise>
 			<c:forEach items="${sectionList}" var="section">
-		    	<option value="${section.id}">${section.name}</option>
+		    	<option value="${section.id}" <c:if test="${section.id eq lectureDetail.sectionId}">selected</c:if>>
+		    		${section.name}
+		    	</option>
 			</c:forEach>
 		</c:otherwise>
 	</c:choose>
 </select>
+                    

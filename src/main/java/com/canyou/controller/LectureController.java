@@ -50,18 +50,18 @@ public class LectureController extends AbstractController{
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String register(Model model){
 		List<LectureCategoryVO> categoryList = sendCategoryListToView(model);
-		List<LectureTypeVO> typeList = sendTypeListToView(model, categoryList, 0);
-		sendSectionListToView(model, typeList, 0);
+		List<LectureTypeVO> typeList = sendTypeListToView(model, categoryList.get(0).getId());
+		sendSectionListToView(model, typeList.get(0).getId());
 		return "/lecture/register";
 	}
 
-	public void sendSectionListToView(Model model, List<LectureTypeVO> typeList,int index) {
-		List<SectionVO> sectionList = sectionService.findByTypeId(typeList.get(index).getId());
+	public void sendSectionListToView(Model model, int typeId) {
+		List<SectionVO> sectionList = sectionService.findByTypeId(typeId);
 		model.addAttribute("sectionList",sectionList);
 	}
 
-	public List<LectureTypeVO> sendTypeListToView(Model model, List<LectureCategoryVO> categoryList, int index) {
-		List<LectureTypeVO> typeList = lectureTypeService.findByCategoryId(categoryList.get(index).getId());
+	public List<LectureTypeVO> sendTypeListToView(Model model, int categoryId) {
+		List<LectureTypeVO> typeList = lectureTypeService.findByCategoryId(categoryId);
 		model.addAttribute("typeList", typeList);
 		return typeList;
 	}
@@ -111,10 +111,13 @@ public class LectureController extends AbstractController{
 		}
 	}
 	
-	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET) 
-	public String update(@PathVariable int id, Model model){
-		LectureDetailVO lectureDetail = lectureDetailService.findById(1);
+	@RequestMapping(value = "/update", method = RequestMethod.GET) 
+	public String update(@RequestParam("id") int id, Model model){
+		LectureDetailVO lectureDetail = lectureDetailService.findById(id);
 		model.addAttribute("lectureDetail", lectureDetail);
+		List<LectureCategoryVO> categoryList = sendCategoryListToView(model);
+		List<LectureTypeVO> typeList = sendTypeListToView(model, lectureDetail.getLectureCategoryId());
+		sendSectionListToView(model, lectureDetail.getLectureTypeId());
 		return "/lecture/update";
 	}
 	
