@@ -16,6 +16,7 @@ public class LoginCheckInterceptor extends HandlerInterceptorAdapter{
 		if(session == null) return redirectToLoginPage(response);
 		if(session.getAttribute("loginAccount") == null)
 			return redirectToLoginPage(response);
+		request.setAttribute("link", request.getRequestURI());
 		return true;
 	}
 

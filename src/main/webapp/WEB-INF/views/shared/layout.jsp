@@ -4,9 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
-<%
-	AccountVO user = (AccountVO)session.getAttribute("signedUser");
-%>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Title</title>
@@ -31,33 +28,31 @@
     <div id="layout"> 
         <div id="menu"> 
             <div class="pure-menu custom-restricted-width">
-                <a class="pure-menu-heading" href="/Account/UseInfo">사용법</a>
+                <a class="pure-menu-heading" href="/account/useInfo">사용법</a>
                 <ul class="pure-menu-list">
                     <li class="pure-menu-item">
-                        <a href="/Lecture/List" class="pure-menu-link">강의관리</a>
+                        <a href="/lecture/list" class="pure-menu-link">강의관리</a>
                     </li>
 
                     <li class="pure-menu-item">
                         <a class="pure-menu-link">졸업요건관리</a>
                         <ul>
-                            <li class="pure-menu-item"><a href="/Requirement/Category" class="pure-menu-link">과목요건</a></li>
-                            <li class="pure-menu-item"><a href="/Requirement/Type" class="pure-menu-link">과목유형요건</a></li>
-                            <li class="pure-menu-item"><a href="/Requirement/Section" class="pure-menu-link">영역요건</a></li>
-                            <li class="pure-menu-item"><a href="/Requirement/Score" class="pure-menu-link">총학점요건</a></li>
+                            <li class="pure-menu-item"><a href="/requirement/category" class="pure-menu-link">과목요건</a></li>
+                            <li class="pure-menu-item"><a href="/requirement/type" class="pure-menu-link">과목유형요건</a></li>
+                            <li class="pure-menu-item"><a href="/requirement/section" class="pure-menu-link">영역요건</a></li>
+                            <li class="pure-menu-item"><a href="/requirement/score" class="pure-menu-link">총학점요건</a></li>
                         </ul>
                     </li>
                     <li>
-                        <a href="/Result/Index" class="pure-menu-link">결과보기</a>
+                        <a href="/result/index" class="pure-menu-link">결과보기</a>
                     </li>
 
                     <li>
-                        <a href="/Account/Update" class="pure-menu-link">회원관리</a>
+                        <a href="/account/update" class="pure-menu-link">회원관리</a>
                     </li>
-                    <c:if test="${empty user}">
-                        <li>
+                    <li>
                             <a href="##" id="logout" class="pure-menu-heading">logout</a>
-                        </li>
-                    </c:if>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -77,11 +72,11 @@
     </layout:block>	
     <script type="text/javascript">
         $("#logout").click(function () {
-            var url = "/Account/Logout";
+            var url = "/account/logout";
             $(location).attr('href', url);
             return false;
         });
-        $("a[href='@ViewBag.Href']").addClass("pure-selected");
+        $("a[href='${link}']").addClass("pure-selected");
     </script>
 </body>
 </html>
