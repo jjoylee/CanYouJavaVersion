@@ -34,7 +34,6 @@ import com.canyou.service.Section.SectionService;
 
 
 public class LectureControllerTest extends AbstractTest{
-	
 	LectureController ctrl;
 	LectureController spy;
 	LectureDetailService detailService;
@@ -224,5 +223,20 @@ public class LectureControllerTest extends AbstractTest{
 		verify(spy,times(1)).sendTypeListToView(model, 1);
 		verify(spy,times(1)).sendSectionListToView(model, 2);
 		assertEquals("/lecture/update", result);
+	}
+	
+	@Test
+	public void update_lecture_post_exist_test(){
+		LectureDetailVO beforeUpdate = mock(LectureDetailVO.class);
+		when(lectureDetail.getId()).thenReturn(0);
+		when(detailService.findById(0)).thenReturn(beforeUpdate);
+		doReturn(true).when(spy).existLectureDetail("title1", session);
+		when(beforeUpdate.getName()).thenReturn("title");
+		when(lectureDetail.getName()).thenReturn("title1");
+		doReturn(expect).when(spy).getFailMessage("이미 존재합니다.");
+		Map<String, String> result = spy.update(lectureDetail, session);
+		verify(detailService,times(1)).findById(0);
+		verify(spy, times(1)).getFailMessage("이미 존재합니다.");
+		assertEquals(expect, result);
 	}
 }

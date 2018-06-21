@@ -9,15 +9,10 @@ public class MockGenerator {
 		Class cls = object.getClass();
 		Field[] fields = cls.getDeclaredFields();
 		for(Field field : fields){
+			if(field.getName().equals("this$0")) continue;
 			Class fieldClass= field.getType();
 			Object mockObj = mock(field.getType());
 			field.set(object, mockObj);
-//			if(field.isAnnotationPresent(Autowired.class)){
-//				Class fieldClass= field.getType();
-//				Object mockObj = mock(field.getType());
-//				field.set(object, mockObj);
-//				System.out.println(mockObj.toString());
-//			}
 		}
 	}
 }
