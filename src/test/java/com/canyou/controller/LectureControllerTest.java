@@ -65,7 +65,7 @@ public class LectureControllerTest extends AbstractTest{
 		ctrl.sectionService = sectionService;
 	}
 	
-	private void setException(){
+	private void setExceptionRule(){
 		exception = mock(DataAccessException.class);
 		when(exception.getMessage()).thenReturn("데이터 에러");
 		doReturn(expect).when(spy).getFailMessage("데이터 에러");
@@ -148,7 +148,7 @@ public class LectureControllerTest extends AbstractTest{
 		when(lectureDetail.getName()).thenReturn("title");
 		doReturn(false).when(spy).existLectureDetail("title", session);
 		doReturn(1).when(spy).loginId(session);
-		setException();
+		setExceptionRule();
 		when(detailService.insert(lectureDetail)).thenThrow(exception);
 		Map<String, String> result = spy.register(lectureDetail, session);
 		verify(lectureDetail, times(1)).setAccountId(1);
@@ -201,7 +201,7 @@ public class LectureControllerTest extends AbstractTest{
 	
 	@Test
 	public void delete_lecture_exception_test(){
-		setException();
+		setExceptionRule();
 		when(detailService.delete(1)).thenThrow(exception);
 		Map<String, String> result = spy.delete(1);
 		verify(spy,times(1)).getFailMessage("데이터 에러");
@@ -227,16 +227,59 @@ public class LectureControllerTest extends AbstractTest{
 	
 	@Test
 	public void update_lecture_post_exist_test(){
-		LectureDetailVO beforeUpdate = mock(LectureDetailVO.class);
-		when(lectureDetail.getId()).thenReturn(0);
-		when(detailService.findById(0)).thenReturn(beforeUpdate);
+		LectureDetailVO beforeUpdate = setBeforeStatusAndTitle();
 		doReturn(true).when(spy).existLectureDetail("title1", session);
 		when(beforeUpdate.getName()).thenReturn("title");
 		when(lectureDetail.getName()).thenReturn("title1");
 		doReturn(expect).when(spy).getFailMessage("이미 존재합니다.");
-		Map<String, String> result = spy.update(lectureDetail, session);
+		Map<String, String> result = spy.update(lectureDetail,0, session);
 		verify(detailService,times(1)).findById(0);
 		verify(spy, times(1)).getFailMessage("이미 존재합니다.");
 		assertEquals(expect, result);
+	}
+	
+	@Test
+	public void update_lecture_post_success_test(){
+		LectureDetailVO beforeUpdate = setBeforeStatusAndTitle();
+		setTitleAndLoginIdForLectureUpdate(beforeUpdate);
+		doReturn(expect).when(spy).getSuccessMessage();
+		Map<String, String> result = spy.update(lectureDetail,0,session);
+		verify(detailService,times(1)).findById(0);
+		verify(spy, times(1)).loginId(session);
+		verify(lectureDetail,times(1)).setAccountId(1);
+		verify(lectureDetail,times(1)).setId(0);
+		verify(detailService,times(1)).update(lectureDetail);
+		verify(spy, times(1)).getSuccessMessage();
+		assertEquals(expect, result);
+	}
+
+	private void setTitleAndLoginIdForLectureUpdate(LectureDetailVO beforeUpdate) {
+		when(beforeUpdate.getName()).thenReturn("title");
+		when(lectureDetail.getName()).thenReturn("title1");
+		doReturn(false).when(spy).existLectureDetail("title1", session);
+		doReturn(1).when(spy).loginId(session);
+	}
+	
+	@Test
+	public void update_lecture_post_exception_test(){
+		LectureDetailVO beforeUpdate = setBeforeStatusAndTitle();
+		setTitleAndLoginIdForLectureUpdate(beforeUpdate);
+		setExceptionRule();
+		when(detailService.update(lectureDetail)).thenThrow(exception);
+		Map<String, String> result = spy.update(lectureDetail,0, session);
+		verify(detailService,times(1)).findById(0);
+		verify(spy, times(1)).loginId(session);
+		verify(lectureDetail,times(1)).setAccountId(1);
+		verify(lectureDetail,times(1)).setId(0);
+		verify(detailService,times(1)).update(lectureDetail);
+		verify(spy, times(1)).getFailMessage("데이터 에러");
+		assertEquals(expect, result);
+	}
+
+	private LectureDetailVO setBeforeStatusAndTitle() {
+		LectureDetailVO beforeUpdate = mock(LectureDetailVO.class);
+		when(lectureDetail.getId()).thenReturn(0);
+		when(detailService.findById(0)).thenReturn(beforeUpdate);
+		return beforeUpdate;
 	}
 }

@@ -121,13 +121,22 @@ public class LectureController extends AbstractController{
 		return "/lecture/update";
 	}
 	
-	@RequestMapping(value = "/update", method = RequestMethod.POST) 
-	public Map<String,String> update(LectureDetailVO lectureDetail, HttpSession session){
+	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String,String> update(LectureDetailVO lectureDetail,@PathVariable("id") int id, HttpSession session){
 		LectureDetailVO before = lectureDetailService.findById(lectureDetail.getId());
 		String title = lectureDetail.getName();
 		if (!title.equals(before.getName()) && existLectureDetail(title,session))
 			return getFailMessage("이미 존재합니다.");	
-		return getSuccessMessage();
+		
+		try{
+			lectureDetail.setAccountId(loginId(session));
+			lectureDetail.setId(id);
+			lectureDetailService.update(lectureDetail);
+			return getSuccessMessage();
+		}catch(Exception e){
+			return getFailMessage(e.getMessage());
+		}
 	}
 	
 	public boolean existLectureDetail(String title, HttpSession session){

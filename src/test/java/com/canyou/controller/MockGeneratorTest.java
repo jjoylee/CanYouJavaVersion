@@ -12,7 +12,7 @@ import com.canyou.model.LectureCategory.LectureCategoryVO;
 public class MockGeneratorTest {
 
 	@Test
-	public void setMockNonPrimitiveTest() throws IllegalArgumentException, IllegalAccessException {
+	public void setMockInnerClassTest() throws IllegalArgumentException, IllegalAccessException {
 		NonPrimitiveClass obj = new NonPrimitiveClass();
 		MockGenerator.setMock(obj);
 		assertNotNull(obj.theList);
