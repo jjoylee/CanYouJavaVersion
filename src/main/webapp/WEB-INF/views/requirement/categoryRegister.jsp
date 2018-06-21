@@ -9,17 +9,14 @@
 		<div class="content">
 		    <form class="pure-form pure-form-aligned" id="categoryRegisterFrm" method="post" action="/Requirement/CategoryRegister">
 		        <fieldset>
-		
 		            <div class="pure-control-group">
 		                <label for="category">과목구분</label>
-		                <select id="category" name="category" required>
+		                <select id="category" name="lectureCategoryId" required>
 		                    <c:forEach items="${list}" var="item" varStatus="status">
 		                        <option value="${item.id}">${item.name}</option>
 		                    </c:forEach>
 		                </select>
-		            </div>
-		
-		
+		            </div>		
 		            <div class="pure-control-group">
 		                <label for="cutline">이수학점</label>
 		                <input id="cutline" type="text" name="cutline" placeholder="숫자를 입력하세요." required>

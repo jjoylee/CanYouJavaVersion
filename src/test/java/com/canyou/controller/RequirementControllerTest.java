@@ -61,4 +61,30 @@ public class RequirementControllerTest {
 		verify(model,times(1)).addAttribute("list",list);
 		assertEquals("/requirement/categoryRegister", result);
 	}
+	
+	@Test
+	public void categoryRegister_post_test() {
+		
+	}
+	
+	@Test
+	public void existCategoryRequirement_exist_test() {
+		doReturn(1).when(spy).loginId(session);
+		LectureCategoryRequirementVO requirement = mock(LectureCategoryRequirementVO.class);
+		when(categoryRequirementService.findByAccountAndCategoryId(1, 2)).thenReturn(requirement);
+		boolean result = spy.existCategoryRequirement(2, session);
+		verify(spy, times(1)).loginId(session);
+		verify(categoryRequirementService, times(1)).findByAccountAndCategoryId(1,2);
+		assertTrue(result);
+	}
+	
+	@Test
+	public void existCategoryRequirement_not_exist_test() {
+		doReturn(1).when(spy).loginId(session);
+		when(categoryRequirementService.findByAccountAndCategoryId(1, 2)).thenReturn(null);
+		boolean result = spy.existCategoryRequirement(2, session);
+		verify(spy, times(1)).loginId(session);
+		verify(categoryRequirementService, times(1)).findByAccountAndCategoryId(1,2);
+		assertFalse(result);
+	}
 }

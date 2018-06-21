@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
@@ -38,5 +39,17 @@ public class RequirementController extends AbstractController{
 		List<LectureCategoryVO> list = categoryService.findAll();
 		model.addAttribute("list",list);
 		return "/requirement/categoryRegister";
+	}
+	
+	@RequestMapping(value = "/categoryRegister", method = RequestMethod.PUT)
+	@ResponseBody
+	public String categoryRegister(LectureCategoryRequirementVO requirement){
+		return "/requirement/categoryRegister";
+	}
+	
+	public boolean existCategoryRequirement(int id, HttpSession session){
+		int accountId = loginId(session);
+		LectureCategoryRequirementVO requirement = categoryRequirementService.findByAccountAndCategoryId(accountId, id);
+		return (requirement != null);
 	}
 }
