@@ -7,7 +7,7 @@
     		<h2>과목요건 등록</h2>
 		</div>
 		<div class="content">
-		    <form class="pure-form pure-form-aligned" id="categoryRegisterFrm" method="post" action="/Requirement/CategoryRegister">
+		    <form class="pure-form pure-form-aligned" id="categoryRegisterFrm" method="post" action="/requirement/categoryRegister">
 		        <fieldset>
 		            <div class="pure-control-group">
 		                <label for="category">과목구분</label>

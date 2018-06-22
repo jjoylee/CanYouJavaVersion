@@ -14,7 +14,7 @@ public class LectureCategoryRequirementDaoImpl implements LectureCategoryRequire
 	@Override
 	public int insert(LectureCategoryRequirementVO vo) {
 		String query = "Insert into LectureCategoryRequirement(accountId,lectureCategoryId,cutline) VALUES(?,?,?)";
-        return jdbcTemplate.update(query, vo.getAccountId(),vo.getCutline(),vo.getLectureCategoryId());
+        return jdbcTemplate.update(query, vo.getAccountId(),vo.getLectureCategoryId(),vo.getCutline());
 	}
 
 	@Override

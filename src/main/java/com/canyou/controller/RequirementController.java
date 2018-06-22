@@ -1,6 +1,7 @@
 package com.canyou.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -41,10 +42,19 @@ public class RequirementController extends AbstractController{
 		return "/requirement/categoryRegister";
 	}
 	
-	@RequestMapping(value = "/categoryRegister", method = RequestMethod.PUT)
+	@RequestMapping(value = "/categoryRegister", method = RequestMethod.POST)
 	@ResponseBody
-	public String categoryRegister(LectureCategoryRequirementVO requirement){
-		return "/requirement/categoryRegister";
+	public Map<String, String> categoryRegister(LectureCategoryRequirementVO requirement, HttpSession session){
+		if(existCategoryRequirement(requirement.getLectureCategoryId(),session))
+			return getFailMessage("이미 존재합니다.");
+		try{
+			System.out.println(requirement.getLectureCategoryId());
+			requirement.setAccountId(loginId(session));
+			categoryRequirementService.insert(requirement);
+			return getSuccessMessage();
+		}catch(Exception e){
+			return getFailMessage(e.getMessage());
+		}
 	}
 	
 	public boolean existCategoryRequirement(int id, HttpSession session){

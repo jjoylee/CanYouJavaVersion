@@ -65,7 +65,7 @@ public class LectureControllerTest extends AbstractTest{
 		ctrl.sectionService = sectionService;
 	}
 	
-	private void setExceptionRule(){
+	private void exceptionWhen(){
 		exception = mock(DataAccessException.class);
 		when(exception.getMessage()).thenReturn("데이터 에러");
 		doReturn(expect).when(spy).getFailMessage("데이터 에러");
@@ -148,7 +148,7 @@ public class LectureControllerTest extends AbstractTest{
 		when(lectureDetail.getName()).thenReturn("title");
 		doReturn(false).when(spy).existLectureDetail("title", session);
 		doReturn(1).when(spy).loginId(session);
-		setExceptionRule();
+		exceptionWhen();
 		when(detailService.insert(lectureDetail)).thenThrow(exception);
 		Map<String, String> result = spy.register(lectureDetail, session);
 		verify(lectureDetail, times(1)).setAccountId(1);
@@ -201,7 +201,7 @@ public class LectureControllerTest extends AbstractTest{
 	
 	@Test
 	public void delete_lecture_exception_test(){
-		setExceptionRule();
+		exceptionWhen();
 		when(detailService.delete(1)).thenThrow(exception);
 		Map<String, String> result = spy.delete(1);
 		verify(spy,times(1)).getFailMessage("데이터 에러");
@@ -264,7 +264,7 @@ public class LectureControllerTest extends AbstractTest{
 	public void update_lecture_post_exception_test(){
 		LectureDetailVO beforeUpdate = setBeforeStatusAndTitle();
 		setTitleAndLoginIdForLectureUpdate(beforeUpdate);
-		setExceptionRule();
+		exceptionWhen();
 		when(detailService.update(lectureDetail)).thenThrow(exception);
 		Map<String, String> result = spy.update(lectureDetail,0, session);
 		verify(detailService,times(1)).findById(0);
