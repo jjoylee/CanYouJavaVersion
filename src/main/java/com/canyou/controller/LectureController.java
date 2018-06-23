@@ -128,7 +128,6 @@ public class LectureController extends AbstractController{
 		String title = lectureDetail.getName();
 		if (!title.equals(before.getName()) && existLectureDetail(title,session))
 			return getFailMessage("이미 존재합니다.");	
-		
 		try{
 			lectureDetail.setAccountId(loginId(session));
 			lectureDetail.setId(id);

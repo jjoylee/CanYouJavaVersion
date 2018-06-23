@@ -52,7 +52,7 @@
 	
 	        $("button[name='update']").click(function () {
 	            var id = $(this).data("id");
-	            var url = "/requirement/categoryUpdate/" + id;
+	            var url = "/requirement/categoryUpdate?id=" + id;
 	            $(location).attr('href', url);
 	        });
     	</script>

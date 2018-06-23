@@ -36,6 +36,7 @@ public class RequirementControllerTest {
 	LectureCategoryRequirementVO categoryRequirement;
 	Map<String, String> expect;
 	DataAccessException exception;
+	List<LectureCategoryVO> categoryList;
 	
 	@Before
 	public void setUp() throws IllegalArgumentException, IllegalAccessException{
@@ -68,11 +69,10 @@ public class RequirementControllerTest {
 	
 	@Test
 	public void categoryRegister_get_test() {
-		List<LectureCategoryVO> list = mock(List.class);
-		when(categoryService.findAll()).thenReturn(list);
+		when(categoryService.findAll()).thenReturn(categoryList);
 		String result = ctrl.categoryRegister(model);
 		verify(categoryService, times(1)).findAll();
-		verify(model,times(1)).addAttribute("list",list);
+		verify(model,times(1)).addAttribute("list",categoryList);
 		assertEquals("/requirement/categoryRegister", result);
 	}
 	
@@ -169,5 +169,36 @@ public class RequirementControllerTest {
 		loginIdVerify();
 		verify(categoryRequirementService, times(1)).findByAccountAndCategoryId(1,2);
 		assertFalse(result);
+	}
+	
+	@Test
+	public void categoryRequirement_delete_success_test() {
+		successMessageWhen();
+		Map<String, String> result = spy.categoryDelete(0);
+		verify(categoryRequirementService, times(1)).delete(0);
+		successMessageVerify();
+		assertEquals(expect,result);
+	}
+	
+	@Test
+	public void categoryRequirement_delete_exception_test() {
+		exceptionWhen();
+		when(categoryRequirementService.delete(any(Integer.class))).thenThrow(exception);
+		Map<String, String> result = spy.categoryDelete(0);
+		verify(categoryRequirementService, times(1)).delete(0);
+		failMessageVerify("데이터 에러");
+		assertEquals(expect,result);
+	}
+	
+	@Test
+	public void categoryRequirement_update_get_success_test() {
+		when(categoryRequirementService.findById(1)).thenReturn(categoryRequirement);
+		when(categoryService.findAll()).thenReturn(categoryList);
+		String result = spy.categoryUpdate(1, model,session);
+		verify(categoryRequirementService,times(1)).findById(1);
+		verify(categoryService, times(1)).findAll();
+		verify(model,times(1)).addAttribute("categoryList", categoryList);
+		verify(model,times(1)).addAttribute("requirement",categoryRequirement);
+		assertEquals("/requirement/categoryUpdate", result);
 	}
 }
