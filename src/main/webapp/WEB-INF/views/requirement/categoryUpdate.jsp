@@ -7,7 +7,7 @@
 		    <h2>과목요건 수정</h2>
 		</div>
 		<div class="content">
-    		<form class="pure-form pure-form-aligned" id="categoryUpdateFrm" method="post" action="/requirement/categoryUpdate">
+    		<form class="pure-form pure-form-aligned" id="categoryUpdateFrm" method="post" action="/requirement/categoryUpdate/${requirement.id}">
 		        <fieldset>
 		            <div class="pure-control-group">
 		                <label for="category">과목구분</label>

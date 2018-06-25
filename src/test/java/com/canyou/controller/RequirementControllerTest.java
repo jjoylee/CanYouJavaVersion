@@ -191,7 +191,7 @@ public class RequirementControllerTest {
 	}
 	
 	@Test
-	public void categoryRequirement_update_get_success_test() {
+	public void categoryRequirement_update_get_test() {
 		when(categoryRequirementService.findById(1)).thenReturn(categoryRequirement);
 		when(categoryService.findAll()).thenReturn(categoryList);
 		String result = spy.categoryUpdate(1, model,session);
@@ -200,5 +200,79 @@ public class RequirementControllerTest {
 		verify(model,times(1)).addAttribute("categoryList", categoryList);
 		verify(model,times(1)).addAttribute("requirement",categoryRequirement);
 		assertEquals("/requirement/categoryUpdate", result);
+	}
+	
+	@Test
+	public void updatedCategoryRequirementExist_exist() {
+		LectureCategoryRequirementVO beforeRequirement = updatedCategoryRequirementsExistRequirementsWhen();
+		doReturn(true).when(spy).existCategoryRequirement(3, session);
+		boolean result = spy.updatedCategoryRequirementExist(1, categoryRequirement, session);
+		updatedCategoryRequirementsExistRequirementsVerify(beforeRequirement);
+		assertTrue(result);
+	}
+	
+	@Test
+	public void updatedCategoryRequirementExist_not_exist() {
+		LectureCategoryRequirementVO beforeRequirement = updatedCategoryRequirementsExistRequirementsWhen();
+		doReturn(false).when(spy).existCategoryRequirement(3, session);
+		boolean result = spy.updatedCategoryRequirementExist(1, categoryRequirement, session);
+		updatedCategoryRequirementsExistRequirementsVerify(beforeRequirement);
+		assertFalse(result);
+	}
+
+	private void updatedCategoryRequirementsExistRequirementsVerify(LectureCategoryRequirementVO beforeRequirement) {
+		verify(categoryRequirementService,times(1)).findById(1);
+		verify(beforeRequirement,times(1)).getLectureCategoryId();
+		verify(categoryRequirement,times(1)).getLectureCategoryId();
+		verify(spy,times(1)).existCategoryRequirement(3, session);
+	}
+
+	private LectureCategoryRequirementVO updatedCategoryRequirementsExistRequirementsWhen() {
+		LectureCategoryRequirementVO beforeRequirement = mock(LectureCategoryRequirementVO.class);
+		when(categoryRequirementService.findById(1)).thenReturn(beforeRequirement);
+		when(beforeRequirement.getLectureCategoryId()).thenReturn(2);
+		when(categoryRequirement.getLectureCategoryId()).thenReturn(3);
+		return beforeRequirement;
+	}
+	
+	@Test
+	public void categoryRequirement_post_update_fail_exist_test() {
+		doReturn(true).when(spy).updatedCategoryRequirementExist(1, categoryRequirement, session);
+		failMessageWhen("이미 존재합니다.");
+		Map<String,String> result = spy.categoryUpdate(1, categoryRequirement, session);
+		failMessageVerify("이미 존재합니다.");
+		assertEquals(expect,result);
+	}
+	
+	@Test
+	public void categoryRequirement_post_update_success_test() {
+		categoryRequirementPostUpdateWhen();
+		successMessageWhen();
+		Map<String, String> result = spy.categoryUpdate(2, categoryRequirement, session);
+		categoryRequirementPostUpdateVerify();
+		successMessageVerify();
+		assertEquals(expect,result);
+	}
+	
+	@Test
+	public void categoryRequirement_post_update_fail_exception_test() {
+		categoryRequirementPostUpdateWhen();
+		exceptionWhen();
+		when(categoryRequirementService.update(categoryRequirement)).thenThrow(exception);
+		Map<String, String> result = spy.categoryUpdate(2, categoryRequirement, session);
+		categoryRequirementPostUpdateVerify();
+		failMessageVerify("데이터 에러");
+		assertEquals(expect,result);
+	}
+	
+	private void categoryRequirementPostUpdateWhen() {
+		doReturn(false).when(spy).updatedCategoryRequirementExist(2, categoryRequirement, session);
+		loginIdWhen();
+	}
+
+	private void categoryRequirementPostUpdateVerify() {
+		verify(categoryRequirement, times(1)).setAccountId(1);
+		verify(categoryRequirement, times(1)).setId(2);
+		verify(categoryRequirementService, times(1)).update(categoryRequirement);
 	}
 }

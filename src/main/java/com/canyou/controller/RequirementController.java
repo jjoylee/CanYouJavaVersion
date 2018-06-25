@@ -58,7 +58,7 @@ public class RequirementController extends AbstractController{
 		}
 	}
 	
-	@RequestMapping(value = "/categoryDelete/{id}", method=RequestMethod.POST)
+	@RequestMapping(value = "/categoryDelete/{id}")
 	@ResponseBody
 	public Map<String, String> categoryDelete(@PathVariable("id")int id){
 		try{
@@ -76,6 +76,28 @@ public class RequirementController extends AbstractController{
 		model.addAttribute("categoryList",list);
 		model.addAttribute("requirement",requirement);
 		return "/requirement/categoryUpdate";
+	}
+	
+	@RequestMapping(value = "/categoryUpdate/{id}", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> categoryUpdate(@PathVariable("id") int id, LectureCategoryRequirementVO requirement, HttpSession session){
+		if(updatedCategoryRequirementExist(id, requirement, session))
+			return getFailMessage("이미 존재합니다.");
+		try{
+			requirement.setAccountId(loginId(session));
+			requirement.setId(id);
+			categoryRequirementService.update(requirement);
+			return getSuccessMessage();
+		}catch(Exception e){
+			return getFailMessage(e.getMessage());
+		}
+	}
+	
+	public boolean updatedCategoryRequirementExist(int id, LectureCategoryRequirementVO requirement, HttpSession session){
+		LectureCategoryRequirementVO beforeRequirement = categoryRequirementService.findById(id);
+		int beforeCategoryId = beforeRequirement.getLectureCategoryId();
+		int requirementId = requirement.getLectureCategoryId();
+		return (beforeCategoryId != requirementId && existCategoryRequirement(requirementId,session));
 	}
 	
 	public boolean existCategoryRequirement(int id, HttpSession session){
