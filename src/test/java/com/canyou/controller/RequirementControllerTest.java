@@ -22,8 +22,11 @@ import org.springframework.ui.Model;
 
 import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
+import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementVO;
 import com.canyou.service.LectureCategory.LectureCategoryService;
 import com.canyou.service.LectureCategoryRequirement.LectureCategoryRequirementService;
+import com.canyou.service.LectureType.LectureTypeService;
+import com.canyou.service.LectureTypeRequirement.LectureTypeRequirementService;
 
 public class RequirementControllerTest {
 	
@@ -37,6 +40,8 @@ public class RequirementControllerTest {
 	Map<String, String> expect;
 	DataAccessException exception;
 	List<LectureCategoryVO> categoryList;
+	LectureTypeRequirementService typeRequirementService;
+	LectureTypeService typeService;
 	
 	@Before
 	public void setUp() throws IllegalArgumentException, IllegalAccessException{
@@ -44,6 +49,8 @@ public class RequirementControllerTest {
 		ctrl = new RequirementController();
 		ctrl.categoryRequirementService = categoryRequirementService;
 		ctrl.categoryService = categoryService;
+		ctrl.typeService = typeService;
+		ctrl.typeRequirementService = typeRequirementService;
 		spy = spy(ctrl);
 	}
 	
@@ -274,5 +281,17 @@ public class RequirementControllerTest {
 		verify(categoryRequirement, times(1)).setAccountId(1);
 		verify(categoryRequirement, times(1)).setId(2);
 		verify(categoryRequirementService, times(1)).update(categoryRequirement);
+	}
+	
+	@Test
+	public void type_get_test() {
+		loginIdWhen();
+		List<LectureTypeRequirementVO> requirements = mock(List.class); 
+		when(typeRequirementService.findByAccountId(1)).thenReturn(requirements);
+		String result = spy.type(model,session);
+		loginIdVerify();
+		verify(typeRequirementService, times(1)).findByAccountId(1);
+		verify(model,times(1)).addAttribute("list", requirements);
+		assertEquals("/requirement/type", result);
 	}
 }

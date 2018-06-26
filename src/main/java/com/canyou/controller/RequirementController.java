@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
+import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementVO;
 import com.canyou.service.LectureCategory.LectureCategoryService;
 import com.canyou.service.LectureCategoryRequirement.LectureCategoryRequirementService;
+import com.canyou.service.LectureType.LectureTypeService;
+import com.canyou.service.LectureTypeRequirement.LectureTypeRequirementService;
 
 @Controller
 @RequestMapping("/requirement")
@@ -28,6 +31,12 @@ public class RequirementController extends AbstractController{
 	
 	@Autowired 
 	LectureCategoryService categoryService;
+	
+	@Autowired 
+	LectureTypeRequirementService typeRequirementService;
+	
+	@Autowired 
+	LectureTypeService typeService;
 	
 	@RequestMapping(value = "/category", method = RequestMethod.GET)
 	public String category(Model model, HttpSession session){
@@ -72,7 +81,7 @@ public class RequirementController extends AbstractController{
 	@RequestMapping(value = "/categoryUpdate", method=RequestMethod.GET)
 	public String categoryUpdate(@RequestParam("id") int id, Model model, HttpSession session){
 		LectureCategoryRequirementVO requirement = categoryRequirementService.findById(id);
-		List<LectureCategoryVO> list= categoryService.findAll();
+		List<LectureCategoryVO> list = categoryService.findAll();
 		model.addAttribute("categoryList",list);
 		model.addAttribute("requirement",requirement);
 		return "/requirement/categoryUpdate";
@@ -104,5 +113,12 @@ public class RequirementController extends AbstractController{
 		int accountId = loginId(session);
 		LectureCategoryRequirementVO requirement = categoryRequirementService.findByAccountAndCategoryId(accountId, id);
 		return (requirement != null);
+	}
+	
+	@RequestMapping(value = "/type", method = RequestMethod.GET)
+	public String type(Model model, HttpSession session){
+		List<LectureTypeRequirementVO> requirements = typeRequirementService.findByAccountId(loginId(session));
+		model.addAttribute("list", requirements);
+		return "/requirement/type";
 	}
 }
