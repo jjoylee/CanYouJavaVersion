@@ -27,14 +27,14 @@ public class AbstractControllerTest {
 	@Test 
 	public void getFailMessageTest(){
 		String message = "msg";
-		Map<String, String> result = ctrl.getFailMessage(message);
+		Map<String, String> result = ctrl.failMessage(message);
 		assertEquals("fail",result.get("result"));
 		assertEquals(message, result.get("message"));
 	}
 	
 	@Test 
 	public void getSucessMessageTest(){
-		Map<String, String> result = ctrl.getSuccessMessage();
+		Map<String, String> result = ctrl.successMessage();
 		assertEquals("success",result.get("result"));
 	}
 	

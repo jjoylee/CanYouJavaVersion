@@ -76,13 +76,13 @@ public class LectureController extends AbstractController{
 	@ResponseBody
 	public Map<String,String> register(LectureDetailVO lectureDetail, HttpSession session){
 		if(existLectureDetail(lectureDetail.getName(), session))
-			return getFailMessage("이미 존재합니다.");
+			return failMessage("이미 존재합니다.");
 		try{
 			lectureDetail.setAccountId(loginId(session));
 			lectureDetailService.insert(lectureDetail);
-			return getSuccessMessage(); 
+			return successMessage(); 
 		}catch(Exception e){
-			return getFailMessage(e.getMessage());
+			return failMessage(e.getMessage());
 		}
 	}
 	
@@ -102,17 +102,25 @@ public class LectureController extends AbstractController{
 	
 	@RequestMapping(value = "/delete/{id}") 
 	@ResponseBody
-	public Map<String,String> delete(@PathVariable int id){
+	public Map<String,String> delete(@PathVariable int id, HttpSession session){
+		if(!isAuthorizedLecture(id, session)) 
+			return failMessage("접근 불가능한 페이지입니다.");
 		try{
 			lectureDetailService.delete(id);
-			return getSuccessMessage();
+			return successMessage();
 		}catch(Exception e){
-			return getFailMessage(e.getMessage());
+			return failMessage(e.getMessage());
 		}
 	}
 	
+	public boolean isAuthorizedLecture(int id, HttpSession session) {
+		LectureDetailVO detail = lectureDetailService.findById(id);
+		return detail.getAccountId() == loginId(session);
+	}
+
 	@RequestMapping(value = "/update", method = RequestMethod.GET) 
-	public String update(@RequestParam("id") int id, Model model){
+	public String update(@RequestParam("id") int id, Model model, HttpSession session){
+		if(!isAuthorizedLecture(id, session)) return "redirect:/lecture/list";
 		LectureDetailVO lectureDetail = lectureDetailService.findById(id);
 		model.addAttribute("lectureDetail", lectureDetail);
 		List<LectureCategoryVO> categoryList = sendCategoryListToView(model);
@@ -127,14 +135,14 @@ public class LectureController extends AbstractController{
 		LectureDetailVO before = lectureDetailService.findById(lectureDetail.getId());
 		String title = lectureDetail.getName();
 		if (!title.equals(before.getName()) && existLectureDetail(title,session))
-			return getFailMessage("이미 존재합니다.");	
+			return failMessage("이미 존재합니다.");	
 		try{
 			lectureDetail.setAccountId(loginId(session));
 			lectureDetail.setId(id);
 			lectureDetailService.update(lectureDetail);
-			return getSuccessMessage();
+			return successMessage();
 		}catch(Exception e){
-			return getFailMessage(e.getMessage());
+			return failMessage(e.getMessage());
 		}
 	}
 	

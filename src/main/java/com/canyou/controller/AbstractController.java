@@ -12,14 +12,14 @@ import com.canyou.model.Account.AccountVO;
 @Controller
 public class AbstractController {
 	
-	public Map<String,String> getFailMessage(String message) {
+	public Map<String,String> failMessage(String message) {
 		Map<String,String> result = new HashMap<String,String>();
 		result.put("result", "fail");
 		result.put("message", message);
 		return result;
 	}
 
-	public Map<String, String> getSuccessMessage() {
+	public Map<String, String> successMessage() {
 		Map<String,String> result = new HashMap<String,String>();
 		result.put("result", "success");
 		return result;

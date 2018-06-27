@@ -68,7 +68,7 @@ public class LectureControllerTest extends AbstractTest{
 	private void exceptionWhen(){
 		exception = mock(DataAccessException.class);
 		when(exception.getMessage()).thenReturn("데이터 에러");
-		doReturn(expect).when(spy).getFailMessage("데이터 에러");
+		doReturn(expect).when(spy).failMessage("데이터 에러");
 	}
 
 	@Test
@@ -125,9 +125,9 @@ public class LectureControllerTest extends AbstractTest{
 	public void register_already_exist_lecture_test(){
 		when(lectureDetail.getName()).thenReturn("title");
 		doReturn(true).when(spy).existLectureDetail("title", session);
-		doReturn(expect).when(spy).getFailMessage("이미 존재합니다.");
+		doReturn(expect).when(spy).failMessage("이미 존재합니다.");
 		Map<String, String> result = spy.register(lectureDetail, session);
-		verify(spy, times(1)).getFailMessage("이미 존재합니다.");
+		verify(spy, times(1)).failMessage("이미 존재합니다.");
 		assertEquals(expect, result);
 	}
 	
@@ -135,11 +135,11 @@ public class LectureControllerTest extends AbstractTest{
 	public void register_success_test(){
 		when(lectureDetail.getName()).thenReturn("title");
 		doReturn(false).when(spy).existLectureDetail("title", session);
-		doReturn(expect).when(spy).getSuccessMessage();
+		doReturn(expect).when(spy).successMessage();
 		when(spy.loginAccount(session)).thenReturn(account);
 		Map<String, String> result = spy.register(lectureDetail, session);
 		verify(detailService,times(1)).insert(lectureDetail);
-		verify(spy, times(1)).getSuccessMessage();
+		verify(spy, times(1)).successMessage();
 		assertEquals(expect, result);
 	}
 	
@@ -152,7 +152,7 @@ public class LectureControllerTest extends AbstractTest{
 		when(detailService.insert(lectureDetail)).thenThrow(exception);
 		Map<String, String> result = spy.register(lectureDetail, session);
 		verify(lectureDetail, times(1)).setAccountId(1);
-		verify(spy, times(1)).getFailMessage("데이터 에러");
+		verify(spy, times(1)).failMessage("데이터 에러");
 		assertEquals(expect, result);
 	}
 	
@@ -191,32 +191,56 @@ public class LectureControllerTest extends AbstractTest{
 	}
 	
 	@Test
+	public void delete_lecture_fail_not_authorized_test(){
+		doReturn(expect).when(spy).failMessage("접근 불가능한 페이지입니다.");
+		doReturn(false).when(spy).isAuthorizedLecture(1, session);
+		Map<String, String> result = spy.delete(1, session);
+		verify(spy,times(1)).isAuthorizedLecture(1, session);
+		verify(spy,times(1)).failMessage("접근 불가능한 페이지입니다.");
+		assertEquals(expect, result);
+	}
+	
+	@Test
 	public void delete_lecture_success_test(){
-		doReturn(expect).when(spy).getSuccessMessage();
-		Map<String, String> result = spy.delete(1);
+		doReturn(expect).when(spy).successMessage();
+		doReturn(true).when(spy).isAuthorizedLecture(1, session);
+		Map<String, String> result = spy.delete(1, session);
+		verify(spy,times(1)).isAuthorizedLecture(1, session);
 		verify(detailService,times(1)).delete(1);
-		verify(spy,times(1)).getSuccessMessage();
+		verify(spy,times(1)).successMessage();
 		assertEquals(expect, result);
 	}
 	
 	@Test
 	public void delete_lecture_exception_test(){
 		exceptionWhen();
+		doReturn(true).when(spy).isAuthorizedLecture(1, session);
 		when(detailService.delete(1)).thenThrow(exception);
-		Map<String, String> result = spy.delete(1);
-		verify(spy,times(1)).getFailMessage("데이터 에러");
+		Map<String, String> result = spy.delete(1, session);
+		verify(spy,times(1)).isAuthorizedLecture(1, session);
+		verify(spy,times(1)).failMessage("데이터 에러");
 		assertEquals(expect, result);
 	}
 	
 	@Test
-	public void update_lecture_get_test(){
+	public void update_lecture_get_not_authorized_test(){
+		doReturn(false).when(spy).isAuthorizedLecture(1, session);
+		String result = spy.update(1, model, session);
+		verify(spy,times(1)).isAuthorizedLecture(1, session);
+		assertEquals("redirect:/lecture/list",result);
+	}
+	
+	@Test
+	public void update_lecture_get_success__test(){
+		doReturn(true).when(spy).isAuthorizedLecture(1, session);
 		when(detailService.findById(any(Integer.class))).thenReturn(lectureDetail);
 		doReturn(categoryList).when(spy).sendCategoryListToView(model);
 		when(lectureDetail.getLectureCategoryId()).thenReturn(1);
 		when(lectureDetail.getLectureTypeId()).thenReturn(2);
 		doReturn(typeList).when(spy).sendTypeListToView(model,1);
 		doNothing().when(spy).sendSectionListToView(model,2);
-		String result = spy.update(1, model);
+		String result = spy.update(1, model, session);
+		verify(spy,times(1)).isAuthorizedLecture(1, session);
 		verify(detailService,times(1)).findById(any(Integer.class));
 		verify(model,times(1)).addAttribute("lectureDetail", lectureDetail);
 		verify(spy,times(1)).sendCategoryListToView(model);
@@ -231,10 +255,10 @@ public class LectureControllerTest extends AbstractTest{
 		doReturn(true).when(spy).existLectureDetail("title1", session);
 		when(beforeUpdate.getName()).thenReturn("title");
 		when(lectureDetail.getName()).thenReturn("title1");
-		doReturn(expect).when(spy).getFailMessage("이미 존재합니다.");
+		doReturn(expect).when(spy).failMessage("이미 존재합니다.");
 		Map<String, String> result = spy.update(lectureDetail,0, session);
 		verify(detailService,times(1)).findById(0);
-		verify(spy, times(1)).getFailMessage("이미 존재합니다.");
+		verify(spy, times(1)).failMessage("이미 존재합니다.");
 		assertEquals(expect, result);
 	}
 	
@@ -242,14 +266,14 @@ public class LectureControllerTest extends AbstractTest{
 	public void update_lecture_post_success_test(){
 		LectureDetailVO beforeUpdate = setBeforeStatusAndTitle();
 		setTitleAndLoginIdForLectureUpdate(beforeUpdate);
-		doReturn(expect).when(spy).getSuccessMessage();
+		doReturn(expect).when(spy).successMessage();
 		Map<String, String> result = spy.update(lectureDetail,0,session);
 		verify(detailService,times(1)).findById(0);
 		verify(spy, times(1)).loginId(session);
 		verify(lectureDetail,times(1)).setAccountId(1);
 		verify(lectureDetail,times(1)).setId(0);
 		verify(detailService,times(1)).update(lectureDetail);
-		verify(spy, times(1)).getSuccessMessage();
+		verify(spy, times(1)).successMessage();
 		assertEquals(expect, result);
 	}
 
@@ -272,7 +296,7 @@ public class LectureControllerTest extends AbstractTest{
 		verify(lectureDetail,times(1)).setAccountId(1);
 		verify(lectureDetail,times(1)).setId(0);
 		verify(detailService,times(1)).update(lectureDetail);
-		verify(spy, times(1)).getFailMessage("데이터 에러");
+		verify(spy, times(1)).failMessage("데이터 에러");
 		assertEquals(expect, result);
 	}
 
@@ -281,5 +305,16 @@ public class LectureControllerTest extends AbstractTest{
 		when(lectureDetail.getId()).thenReturn(0);
 		when(detailService.findById(0)).thenReturn(beforeUpdate);
 		return beforeUpdate;
+	}
+	
+	@Test
+	public void isAuthorizedLecture_success_test(){
+		when(detailService.findById(1)).thenReturn(lectureDetail);
+		when(lectureDetail.getAccountId()).thenReturn(2);
+		doReturn(2).when(spy).loginId(session);
+		assertTrue(spy.isAuthorizedLecture(1, session));
+		verify(detailService,times(1)).findById(1);
+		verify(lectureDetail,times(1)).getAccountId();
+		verify(spy,times(1)).loginId(session);
 	}
 }

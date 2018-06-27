@@ -38,6 +38,7 @@ public class RequirementControllerTest {
 	LectureCategoryRequirementService categoryRequirementService;
 	LectureCategoryService categoryService;
 	LectureCategoryRequirementVO categoryRequirement;
+	LectureTypeRequirementVO typeRequirement;
 	Map<String, String> expect;
 	DataAccessException exception;
 	List<LectureCategoryVO> categoryList;
@@ -95,11 +96,11 @@ public class RequirementControllerTest {
 	}
 
 	private void failMessageVerify(String message) {
-		verify(spy,times(1)).getFailMessage(message);
+		verify(spy,times(1)).failMessage(message);
 	}
 
 	private void failMessageWhen(String message) {
-		doReturn(expect).when(spy).getFailMessage(message);
+		doReturn(expect).when(spy).failMessage(message);
 	}
 
 	private void existCategoryRequirementVerify(Map result) {
@@ -148,11 +149,11 @@ public class RequirementControllerTest {
 	}
 
 	private void successMessageVerify() {
-		verify(spy,times(1)).getSuccessMessage();
+		verify(spy,times(1)).successMessage();
 	}
 
 	private void successMessageWhen() {
-		doReturn(expect).when(spy).getSuccessMessage();
+		doReturn(expect).when(spy).successMessage();
 	}
 	
 	private void existCategoryRequirementWhen(boolean result) {
@@ -325,8 +326,7 @@ public class RequirementControllerTest {
 	@Test
 	public void typeRequirementExist_exist_test() {
 		loginIdWhen();
-		LectureTypeRequirementVO requirement = mock(LectureTypeRequirementVO.class);
-		when(typeRequirementService.findByAccountAndTypeId(1, 2)).thenReturn(requirement);
+		when(typeRequirementService.findByAccountAndTypeId(1, 2)).thenReturn(typeRequirement);
 		assertTrue(spy.existTypeRequirement(2, session));
 		verify(typeRequirementService,times(1)).findByAccountAndTypeId(1, 2);
 		loginIdVerify();
@@ -342,15 +342,69 @@ public class RequirementControllerTest {
 	}
 	
 	@Test
-	public void typeRegister_post_test() {
-		LectureCategoryVO category = getCategoryListWhen();
-		getTypeListWhen(category);
-		String result = ctrl.typeRegister(model);
-		verify(categoryService,times(1)).findLectureTypeExist();
-		verify(model,times(1)).addAttribute("categoryList", categoryList);
-		verify(model,times(1)).addAttribute("typeList", typeList);
-		verify(categoryList,times(1)).get(0);
-		verify(category,times(1)).getId();
-		assertEquals("/requirement/typeRegister",result);
+	public void typeRegister_post_fail_already_exist_test() {
+		existTypeRequirementWhen(true);
+		failMessageWhen("이미 존재합니다.");
+		Map<String,String> result = spy.typeRegister(typeRequirement, session);
+		verify(typeRequirement,times(1)).getLectureTypeId();
+		failMessageVerify("이미 존재합니다.");
+		assertEquals(expect, result);
+	}
+
+	private void existTypeRequirementWhen(boolean result) {
+		when(typeRequirement.getLectureTypeId()).thenReturn(1);
+		doReturn(result).when(spy).existTypeRequirement(1, session);
+	}
+	
+	@Test
+	public void typeRegister_post_success_test() {
+		typeRegisterInsertWhen();
+		Map<String,String> result = spy.typeRegister(typeRequirement, session);
+		typeRegisterInsertVerify();
+		successMessageVerify();
+		assertEquals(expect, result);
+	}
+	
+	@Test
+	public void typeRegister_post_fail_exception_test() {
+		typeRegisterInsertWhen();
+		exceptionWhen();
+		when(typeRequirementService.insert(typeRequirement)).thenThrow(exception);
+		Map<String,String> result = spy.typeRegister(typeRequirement, session);
+		typeRegisterInsertVerify();
+		failMessageVerify("데이터 에러");
+		assertEquals(expect, result);
+	}
+
+	private void typeRegisterInsertVerify() {
+		loginIdVerify();
+		verify(typeRequirement,times(1)).setAccountId(1);
+		verify(typeRequirementService,times(1)).insert(typeRequirement);
+		verify(typeRequirement,times(1)).getLectureTypeId();
+	}
+
+	private void typeRegisterInsertWhen() {
+		existTypeRequirementWhen(false);
+		loginIdWhen();
+		successMessageWhen();
+	}
+	
+	@Test
+	public void typeDelete_success_test() {
+		successMessageWhen();
+		Map<String,String> result = spy.typeDelete(1);
+		verify(typeRequirementService,times(1)).delete(1);
+		successMessageVerify();
+		assertEquals(expect, result);
+	}
+	
+	@Test
+	public void typeDelete_fail_exception_test() {
+		exceptionWhen();
+		when(typeRequirementService.delete(1)).thenThrow(exception);
+		Map<String,String> result = spy.typeDelete(1);
+		verify(typeRequirementService,times(1)).delete(1);
+		failMessageVerify("데이터 에러");
+		assertEquals(expect, result);
 	}
 }

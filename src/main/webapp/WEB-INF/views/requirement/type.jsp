@@ -45,7 +45,7 @@
 		<script type="text/javascript">
             $("button[name='delete']").click(function () {
                 var id = $(this).data("id");
-                var url = "/requirement/typeRequirementDelete/" + id;
+                var url = "/requirement/typeDelete/" + id;
                 $.getJSON(url, function (data) {
                     if (data.result == 'fail') {
                         alert(data.message);

@@ -58,13 +58,13 @@ public class RequirementController extends AbstractController{
 	@ResponseBody
 	public Map<String, String> categoryRegister(LectureCategoryRequirementVO requirement, HttpSession session){
 		if(existCategoryRequirement(requirement.getLectureCategoryId(),session))
-			return getFailMessage("이미 존재합니다.");
+			return failMessage("이미 존재합니다.");
 		try{
 			requirement.setAccountId(loginId(session));
 			categoryRequirementService.insert(requirement);
-			return getSuccessMessage();
+			return successMessage();
 		}catch(Exception e){
-			return getFailMessage(e.getMessage());
+			return failMessage(e.getMessage());
 		}
 	}
 	
@@ -73,9 +73,9 @@ public class RequirementController extends AbstractController{
 	public Map<String, String> categoryDelete(@PathVariable("id")int id){
 		try{
 			categoryRequirementService.delete(id);
-			return getSuccessMessage();
+			return successMessage();
 		}catch(Exception e){
-			return getFailMessage(e.getMessage());
+			return failMessage(e.getMessage());
 		}
 	}
 	
@@ -92,14 +92,14 @@ public class RequirementController extends AbstractController{
 	@ResponseBody
 	public Map<String, String> categoryUpdate(@PathVariable("id") int id, LectureCategoryRequirementVO requirement, HttpSession session){
 		if(updatedCategoryRequirementExist(id, requirement, session))
-			return getFailMessage("이미 존재합니다.");
+			return failMessage("이미 존재합니다.");
 		try{
 			requirement.setAccountId(loginId(session));
 			requirement.setId(id);
 			categoryRequirementService.update(requirement);
-			return getSuccessMessage();
+			return successMessage();
 		}catch(Exception e){
-			return getFailMessage(e.getMessage());
+			return failMessage(e.getMessage());
 		}
 	}
 	
@@ -137,8 +137,29 @@ public class RequirementController extends AbstractController{
 		LectureTypeRequirementVO requirement = typeRequirementService.findByAccountAndTypeId(accountId, typeId);
 		return (requirement != null);
 	}
+	
 	@RequestMapping(value = "/typeRegister", method = RequestMethod.POST)
-	public String typeRegister(Model model, HttpSession session){
-		return "/requirement/typeRegister";
+	@ResponseBody
+	public Map<String,String> typeRegister(LectureTypeRequirementVO requirement, HttpSession session){
+		if(existTypeRequirement(requirement.getLectureTypeId(), session))
+			return failMessage("이미 존재합니다.");
+		try{
+			requirement.setAccountId(loginId(session));
+			typeRequirementService.insert(requirement);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value = "/typeDelete/{id}")
+	@ResponseBody
+	public Map<String,String> typeDelete(@PathVariable("id")int typeId){
+		try{
+			typeRequirementService.delete(typeId);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
 	}
 }

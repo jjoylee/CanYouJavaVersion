@@ -33,13 +33,13 @@ public class AccountController extends AbstractController{
 	{
 		AccountVO account = accountService.findByEmail(email);
 		if(account == null) 
-			return getFailMessage("존재하지 않는 이메일입니다.");
+			return failMessage("존재하지 않는 이메일입니다.");
 		if(account.getState().equals("DEL"))
-			return getFailMessage("탈퇴한 이메일입니다.");
+			return failMessage("탈퇴한 이메일입니다.");
 		if(!account.getPassword().equals(password)) 
-			return getFailMessage("존재하지 않는 비밀번호입니다.");
+			return failMessage("존재하지 않는 비밀번호입니다.");
 		session.setAttribute("loginAccount", account);
-		return getSuccessMessage();
+		return successMessage();
 	}
 	
 	@RequestMapping(value = "/join", method = RequestMethod.GET)
@@ -52,13 +52,13 @@ public class AccountController extends AbstractController{
 	public Map<String,String> join(AccountVO accountVO) {
 		AccountVO checkExistAccount = accountService.findByEmail(accountVO.getEmail());
 		if(checkExistAccount != null)
-			return getFailMessage("이미 가입된 회원입니다.");
+			return failMessage("이미 가입된 회원입니다.");
 		try{
 			accountVO.setState("REG");
 			accountService.insert(accountVO);
-			return getSuccessMessage();
+			return successMessage();
 		}catch(Exception e){
-			return getFailMessage(e.getMessage());
+			return failMessage(e.getMessage());
 		}
 	}
 }
