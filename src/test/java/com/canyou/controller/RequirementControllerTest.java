@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 
 import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
+import com.canyou.model.LectureType.LectureTypeVO;
 import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementVO;
 import com.canyou.service.LectureCategory.LectureCategoryService;
 import com.canyou.service.LectureCategoryRequirement.LectureCategoryRequirementService;
@@ -40,6 +41,7 @@ public class RequirementControllerTest {
 	Map<String, String> expect;
 	DataAccessException exception;
 	List<LectureCategoryVO> categoryList;
+	List<LectureTypeVO> typeList;
 	LectureTypeRequirementService typeRequirementService;
 	LectureTypeService typeService;
 	
@@ -293,5 +295,62 @@ public class RequirementControllerTest {
 		verify(typeRequirementService, times(1)).findByAccountId(1);
 		verify(model,times(1)).addAttribute("list", requirements);
 		assertEquals("/requirement/type", result);
+	}
+	
+	@Test
+	public void typeRegister_get_test() {
+		LectureCategoryVO category = getCategoryListWhen();
+		getTypeListWhen(category);
+		String result = ctrl.typeRegister(model);
+		verify(categoryService,times(1)).findLectureTypeExist();
+		verify(model,times(1)).addAttribute("categoryList", categoryList);
+		verify(model,times(1)).addAttribute("typeList", typeList);
+		verify(categoryList,times(1)).get(0);
+		verify(category,times(1)).getId();
+		assertEquals("/requirement/typeRegister",result);
+	}
+
+	private void getTypeListWhen(LectureCategoryVO category) {
+		when(category.getId()).thenReturn(1);
+		when(typeService.findByCategoryId(1)).thenReturn(typeList);
+	}
+
+	private LectureCategoryVO getCategoryListWhen() {
+		LectureCategoryVO category = mock(LectureCategoryVO.class);
+		when(categoryService.findLectureTypeExist()).thenReturn(categoryList);
+		when(categoryList.get(0)).thenReturn(category);
+		return category;
+	}
+	
+	@Test
+	public void typeRequirementExist_exist_test() {
+		loginIdWhen();
+		LectureTypeRequirementVO requirement = mock(LectureTypeRequirementVO.class);
+		when(typeRequirementService.findByAccountAndTypeId(1, 2)).thenReturn(requirement);
+		assertTrue(spy.existTypeRequirement(2, session));
+		verify(typeRequirementService,times(1)).findByAccountAndTypeId(1, 2);
+		loginIdVerify();
+	}
+	
+	@Test
+	public void typeRequirementExist_not_exist_test() {
+		loginIdWhen();
+		when(typeRequirementService.findByAccountAndTypeId(1, 2)).thenReturn(null);
+		assertFalse(spy.existTypeRequirement(2, session));
+		verify(typeRequirementService,times(1)).findByAccountAndTypeId(1, 2);
+		loginIdVerify();
+	}
+	
+	@Test
+	public void typeRegister_post_test() {
+		LectureCategoryVO category = getCategoryListWhen();
+		getTypeListWhen(category);
+		String result = ctrl.typeRegister(model);
+		verify(categoryService,times(1)).findLectureTypeExist();
+		verify(model,times(1)).addAttribute("categoryList", categoryList);
+		verify(model,times(1)).addAttribute("typeList", typeList);
+		verify(categoryList,times(1)).get(0);
+		verify(category,times(1)).getId();
+		assertEquals("/requirement/typeRegister",result);
 	}
 }

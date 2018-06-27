@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
+import com.canyou.model.LectureType.LectureTypeVO;
 import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementVO;
 import com.canyou.service.LectureCategory.LectureCategoryService;
 import com.canyou.service.LectureCategoryRequirement.LectureCategoryRequirementService;
@@ -120,5 +121,24 @@ public class RequirementController extends AbstractController{
 		List<LectureTypeRequirementVO> requirements = typeRequirementService.findByAccountId(loginId(session));
 		model.addAttribute("list", requirements);
 		return "/requirement/type";
+	}
+	
+	@RequestMapping(value = "/typeRegister", method = RequestMethod.GET)
+	public String typeRegister(Model model){
+		List<LectureCategoryVO> categoryList = categoryService.findLectureTypeExist();
+		List<LectureTypeVO> typeList = typeService.findByCategoryId(categoryList.get(0).getId());
+		model.addAttribute("categoryList", categoryList);
+		model.addAttribute("typeList", typeList);
+		return "/requirement/typeRegister";
+	}
+	
+	public boolean existTypeRequirement(int typeId, HttpSession session){
+		int accountId = loginId(session);
+		LectureTypeRequirementVO requirement = typeRequirementService.findByAccountAndTypeId(accountId, typeId);
+		return (requirement != null);
+	}
+	@RequestMapping(value = "/typeRegister", method = RequestMethod.POST)
+	public String typeRegister(Model model, HttpSession session){
+		return "/requirement/typeRegister";
 	}
 }

@@ -67,7 +67,6 @@
                     if (data.result == 'fail') {
                         alert(data.message);
                     } else {
-                    	alert(data.result);
                         $(location).attr('href', "/account/login");
                     }
                 },
