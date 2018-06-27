@@ -68,9 +68,16 @@ public class RequirementController extends AbstractController{
 		}
 	}
 	
+	public boolean isAuthorizedCategory(int id, HttpSession session){
+		LectureCategoryRequirementVO requirement = categoryRequirementService.findById(id);
+		return requirement.getAccountId() == loginId(session);
+	}
+	
 	@RequestMapping(value = "/categoryDelete/{id}")
 	@ResponseBody
-	public Map<String, String> categoryDelete(@PathVariable("id")int id){
+	public Map<String, String> categoryDelete(@PathVariable("id")int id, HttpSession session){
+		if(!isAuthorizedCategory(id,session))
+			return failMessage("접근 불가능한 페이지입니다.");
 		try{
 			categoryRequirementService.delete(id);
 			return successMessage();
@@ -81,6 +88,8 @@ public class RequirementController extends AbstractController{
 	
 	@RequestMapping(value = "/categoryUpdate", method=RequestMethod.GET)
 	public String categoryUpdate(@RequestParam("id") int id, Model model, HttpSession session){
+		if(!isAuthorizedCategory(id, session))
+			return "redirect:/requirement/category";
 		LectureCategoryRequirementVO requirement = categoryRequirementService.findById(id);
 		List<LectureCategoryVO> list = categoryService.findAll();
 		model.addAttribute("categoryList",list);
@@ -152,11 +161,18 @@ public class RequirementController extends AbstractController{
 		}
 	}
 	
+	public boolean isAuthorizedType(int id, HttpSession session){
+		LectureTypeRequirementVO requirement = typeRequirementService.findById(id);
+		return requirement.getAccountId() == loginId(session);
+	}
+	
 	@RequestMapping(value = "/typeDelete/{id}")
 	@ResponseBody
-	public Map<String,String> typeDelete(@PathVariable("id")int typeId){
+	public Map<String,String> typeDelete(@PathVariable("id")int id, HttpSession session){
+		if(!isAuthorizedType(id,session))
+			return failMessage("접근 불가능한 페이지입니다.");
 		try{
-			typeRequirementService.delete(typeId);
+			typeRequirementService.delete(id);
 			return successMessage();
 		}catch(Exception e){
 			return failMessage(e.getMessage());

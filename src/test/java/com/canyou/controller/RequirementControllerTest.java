@@ -182,9 +182,19 @@ public class RequirementControllerTest {
 	}
 	
 	@Test
+	public void categoryRequirement_delete_fail_notAuthorized_test() {
+		doReturn(false).when(spy).isAuthorizedCategory(0, session);
+		failMessageWhen("접근 불가능한 페이지입니다.");
+		Map<String, String> result = spy.categoryDelete(0,session);
+		failMessageVerify("접근 불가능한 페이지입니다.");
+		assertEquals(expect,result);
+	}
+	
+	@Test
 	public void categoryRequirement_delete_success_test() {
+		doReturn(true).when(spy).isAuthorizedCategory(0, session);
 		successMessageWhen();
-		Map<String, String> result = spy.categoryDelete(0);
+		Map<String, String> result = spy.categoryDelete(0, session);
 		verify(categoryRequirementService, times(1)).delete(0);
 		successMessageVerify();
 		assertEquals(expect,result);
@@ -192,19 +202,30 @@ public class RequirementControllerTest {
 	
 	@Test
 	public void categoryRequirement_delete_exception_test() {
+		doReturn(true).when(spy).isAuthorizedCategory(0, session);
 		exceptionWhen();
 		when(categoryRequirementService.delete(any(Integer.class))).thenThrow(exception);
-		Map<String, String> result = spy.categoryDelete(0);
+		Map<String, String> result = spy.categoryDelete(0,session);
 		verify(categoryRequirementService, times(1)).delete(0);
 		failMessageVerify("데이터 에러");
 		assertEquals(expect,result);
 	}
 	
 	@Test
-	public void categoryRequirement_update_get_test() {
+	public void categoryRequirement_update_get_not_authorized_test() {
+		doReturn(false).when(spy).isAuthorizedCategory(1, session);
+		String result = spy.categoryUpdate(1, model,session);
+		verify(spy,times(1)).isAuthorizedCategory(1, session);
+		assertEquals("redirect:/requirement/category", result);
+	}
+	
+	@Test
+	public void categoryRequirement_update_get_success_test() {
+		doReturn(true).when(spy).isAuthorizedCategory(1, session);
 		when(categoryRequirementService.findById(1)).thenReturn(categoryRequirement);
 		when(categoryService.findAll()).thenReturn(categoryList);
 		String result = spy.categoryUpdate(1, model,session);
+		verify(spy,times(1)).isAuthorizedCategory(1, session);
 		verify(categoryRequirementService,times(1)).findById(1);
 		verify(categoryService, times(1)).findAll();
 		verify(model,times(1)).addAttribute("categoryList", categoryList);
@@ -243,6 +264,28 @@ public class RequirementControllerTest {
 		when(beforeRequirement.getLectureCategoryId()).thenReturn(2);
 		when(categoryRequirement.getLectureCategoryId()).thenReturn(3);
 		return beforeRequirement;
+	}
+	
+	@Test
+	public void isAuthorizedCategory_true_test() {
+		when(categoryRequirementService.findById(1)).thenReturn(categoryRequirement);
+		when(categoryRequirement.getAccountId()).thenReturn(1);
+		loginIdWhen();
+		assertTrue(spy.isAuthorizedCategory(1, session));
+		verify(categoryRequirementService, times(1)).findById(1);
+		verify(categoryRequirement,times(1)).getAccountId();
+		loginIdVerify();
+	}
+	
+	@Test
+	public void isAuthorizedCategory_false_test() {
+		when(categoryRequirementService.findById(1)).thenReturn(categoryRequirement);
+		when(categoryRequirement.getAccountId()).thenReturn(2);
+		loginIdWhen();
+		assertFalse(spy.isAuthorizedCategory(1, session));
+		verify(categoryRequirementService, times(1)).findById(1);
+		verify(categoryRequirement,times(1)).getAccountId();
+		loginIdVerify();
 	}
 	
 	@Test
@@ -390,19 +433,44 @@ public class RequirementControllerTest {
 	}
 	
 	@Test
+	public void isAuthorizedType_true_test(){
+		when(typeRequirementService.findById(1)).thenReturn(typeRequirement);
+		when(typeRequirement.getAccountId()).thenReturn(1);
+		loginIdWhen();
+		assertTrue(spy.isAuthorizedType(1, session));
+		verify(typeRequirementService,times(1)).findById(1);
+		verify(typeRequirement,times(1)).getAccountId();
+		loginIdVerify();
+	}
+	
+	@Test
 	public void typeDelete_success_test() {
+		doReturn(true).when(spy).isAuthorizedType(1, session);
 		successMessageWhen();
-		Map<String,String> result = spy.typeDelete(1);
+		Map<String,String> result = spy.typeDelete(1, session);
+		verify(spy,times(1)).isAuthorizedType(1, session);
 		verify(typeRequirementService,times(1)).delete(1);
 		successMessageVerify();
 		assertEquals(expect, result);
 	}
 	
 	@Test
+	public void typeDelete_fail_not_authorized_test() {
+		doReturn(false).when(spy).isAuthorizedType(1, session);
+		failMessageWhen("접근 불가능한 페이지입니다.");
+		Map<String, String> result = spy.typeDelete(1, session);
+		verify(spy,times(1)).isAuthorizedType(1, session);
+		failMessageVerify("접근 불가능한 페이지입니다.");
+		assertEquals(expect, result);
+	}
+	
+	@Test
 	public void typeDelete_fail_exception_test() {
+		doReturn(true).when(spy).isAuthorizedType(1, session);
 		exceptionWhen();
 		when(typeRequirementService.delete(1)).thenThrow(exception);
-		Map<String,String> result = spy.typeDelete(1);
+		Map<String,String> result = spy.typeDelete(1, session);
+		verify(spy,times(1)).isAuthorizedType(1, session);
 		verify(typeRequirementService,times(1)).delete(1);
 		failMessageVerify("데이터 에러");
 		assertEquals(expect, result);
