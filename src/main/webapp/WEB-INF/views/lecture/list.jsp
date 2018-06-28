@@ -50,48 +50,48 @@
 	</layout:put>
 	<layout:put block="scripts">
 	    <script type="text/javascript">
-	    $(document).ready(function () {
-	        $('#lectureList').each(function () {
-	            var currentPage = 0;
-	            var numPerPage = 10;
-	            var $table = $(this);
-	            $table.bind('repaginate', function () {
-	                $table.find('tbody tr').hide().slice(currentPage * numPerPage, (currentPage + 1) * numPerPage).show();
-	            });
-	            $table.trigger('repaginate');
-	            var numRows = $table.find('tbody tr').length;
-	            var numPages = Math.ceil(numRows / numPerPage);
-	            var $pager = $('<div class="pager"></div>');
-	            for (var page = 0; page < numPages; page++) {
-	                $('<button class="pure-button"></button>').text(page + 1).bind('click', {
-	                    newPage: page
-	                }, function (event) {
-	                    currentPage = event.data['newPage'];
-	                    $table.trigger('repaginate');
-	                    $(this).addClass('pure-button-active').siblings().removeClass('pure-button-active');
-	                }).appendTo($pager)
-	            }
-	            $pager.insertAfter($table).find('span.page-number:first').addClass('pure-button-active');
-	        });
-
-	        $("button[name='delete']").click(function () {
-	            var id = $(this).data("id");
-	            var url = "/lecture/delete/" + id;
-	            $.getJSON(url, function (data) {
-	                if (data.result == 'fail') {
-	                    alert(data.message);
-	                } else {
-	                    $(location).attr('href', "/lecture/list");
-	                }
-	            });
-	        });
-
-	        $("button[name='update']").click(function () {
-	            var id = $(this).data("id");
-	            var url = "/lecture/update?id=" + id;
-	            $(location).attr('href', url);
-	        });
-	    });
+		    $(document).ready(function () {
+		        $('#lectureList').each(function () {
+		            var currentPage = 0;
+		            var numPerPage = 10;
+		            var $table = $(this);
+		            $table.bind('repaginate', function () {
+		                $table.find('tbody tr').hide().slice(currentPage * numPerPage, (currentPage + 1) * numPerPage).show();
+		            });
+		            $table.trigger('repaginate');
+		            var numRows = $table.find('tbody tr').length;
+		            var numPages = Math.ceil(numRows / numPerPage);
+		            var $pager = $('<div class="pager"></div>');
+		            for (var page = 0; page < numPages; page++) {
+		                $('<button class="pure-button"></button>').text(page + 1).bind('click', {
+		                    newPage: page
+		                }, function (event) {
+		                    currentPage = event.data['newPage'];
+		                    $table.trigger('repaginate');
+		                    $(this).addClass('pure-button-active').siblings().removeClass('pure-button-active');
+		                }).appendTo($pager)
+		            }
+		            $pager.insertAfter($table).find('span.page-number:first').addClass('pure-button-active');
+		        });
+	
+		        $("button[name='delete']").click(function () {
+		            var id = $(this).data("id");
+		            var url = "/lecture/delete/" + id;
+		            $.getJSON(url, function (data) {
+		                if (data.result == 'fail') {
+		                    alert(data.message);
+		                } else {
+		                    $(location).attr('href', "/lecture/list");
+		                }
+		            });
+		        });
+	
+		        $("button[name='update']").click(function () {
+		            var id = $(this).data("id");
+		            var url = "/lecture/update?id=" + id;
+		            $(location).attr('href', url);
+		        });
+		    });
 		</script>
 	</layout:put>
 </layout:extends>

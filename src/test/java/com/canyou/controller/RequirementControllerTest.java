@@ -502,5 +502,71 @@ public class RequirementControllerTest {
 		verify(model,times(1)).addAttribute("requirement",typeRequirement);
 	}
 	
+	@Test
+	public void updatedTypeExist_test(){
+		LectureTypeRequirementVO before = mock(LectureTypeRequirementVO.class);
+		when(typeRequirementService.findById(1)).thenReturn(before);
+		when(before.getLectureTypeId()).thenReturn(2);
+		when(typeRequirement.getLectureTypeId()).thenReturn(3);
+		doReturn(true).when(spy).existTypeRequirement(3, session);
+		assertTrue(spy.updatedTypeExist(1, typeRequirement, session));
+		verify(typeRequirementService,times(1)).findById(1);
+		verify(before,times(1)).getLectureTypeId();
+		verify(typeRequirement,times(1)).getLectureTypeId();
+		verify(spy,times(1)).existTypeRequirement(3, session);
+	}
 	
+	@Test
+	public void typeUpdate_post_fail_alreadyExist_test() {
+		doReturn(true).when(spy).updatedTypeExist(1, typeRequirement, session);
+		failMessageWhen("이미 존재합니다.");
+		Map<String, String> result = spy.typeUpdate(1, session, typeRequirement);
+		verify(spy,times(1)).updatedTypeExist(1, typeRequirement, session);
+		failMessageVerify("이미 존재합니다.");
+		assertEquals(expect,result);
+	}
+	
+	@Test
+	public void typeUpdate_post_success_test() {
+		typeUpdateWhen();
+		successMessageWhen();
+		Map<String, String> result = spy.typeUpdate(1, session, typeRequirement);
+		typeUpdateVerify();
+		successMessageVerify();
+		assertEquals(expect,result);
+	}
+
+	private void typeUpdateVerify() {
+		verify(spy,times(1)).updatedTypeExist(1, typeRequirement, session);
+		verify(typeRequirement,times(1)).setAccountId(1);
+		verify(typeRequirement,times(1)).setId(1);
+		verify(typeRequirementService,times(1)).update(typeRequirement);
+	}
+
+	private void typeUpdateWhen() {
+		doReturn(false).when(spy).updatedTypeExist(1, typeRequirement, session);
+		loginIdWhen();
+	}
+	
+	@Test
+	public void typeUpdate_post_fail_exception_test() {
+		typeUpdateWhen();
+		exceptionWhen();
+		when(typeRequirementService.update(typeRequirement)).thenThrow(exception);
+		Map<String, String> result = spy.typeUpdate(1, session, typeRequirement);
+		typeUpdateVerify();
+		failMessageVerify("데이터 에러");
+		assertEquals(expect,result);
+	}
+	
+	@Test
+	public void section_test() {
+		typeUpdateWhen();
+		exceptionWhen();
+		when(typeRequirementService.update(typeRequirement)).thenThrow(exception);
+		Map<String, String> result = spy.typeUpdate(1, session, typeRequirement);
+		typeUpdateVerify();
+		failMessageVerify("데이터 에러");
+		assertEquals(expect,result);
+	}
 }

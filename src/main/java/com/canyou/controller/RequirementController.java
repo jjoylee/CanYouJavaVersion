@@ -39,6 +39,9 @@ public class RequirementController extends AbstractController{
 	@Autowired 
 	LectureTypeService typeService;
 	
+	@Autowired 
+	SectionRequirementService sectionRequirementService;
+	
 	@RequestMapping(value = "/category", method = RequestMethod.GET)
 	public String category(Model model, HttpSession session){
 		int accountId = loginId(session);
@@ -180,7 +183,7 @@ public class RequirementController extends AbstractController{
 	}
 	
 	@RequestMapping(value = "/typeUpdate", method = RequestMethod.GET)
-	public String typeUpdate(@RequestParam("id")int id, HttpSession session, Model model){
+	public String typeUpdate(@RequestParam("id") int id, HttpSession session, Model model){
 		if(!isAuthorizedType(id,session))
 			return "redirect:/requirement/type";
 		LectureTypeRequirementVO requirement = typeRequirementService.findById(id);
@@ -190,5 +193,31 @@ public class RequirementController extends AbstractController{
 		model.addAttribute("typeList", typeList);
 		model.addAttribute("requirement",requirement);
 		return "/requirement/typeUpdate";
+	}
+	
+	@RequestMapping(value = "/typeUpdate/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> typeUpdate(@PathVariable("id") int id, HttpSession session, LectureTypeRequirementVO requirement){
+		if(updatedTypeExist(id,requirement,session))
+			return failMessage("이미 존재합니다.");
+		try{
+			requirement.setAccountId(loginId(session));
+			requirement.setId(id);
+			typeRequirementService.update(requirement);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
+	}
+
+	public boolean updatedTypeExist(int id, LectureTypeRequirementVO requirement, HttpSession session) {
+		LectureTypeRequirementVO before = typeRequirementService.findById(id);
+		int typeId = requirement.getLectureTypeId();
+		return (before.getLectureTypeId() != typeId && existTypeRequirement(typeId,session));
+	}
+	
+	@RequestMapping(value = "/section", method = RequestMethod.GET)
+	public String section( HttpSession session, Model model){
+		return "";
 	}
 }
