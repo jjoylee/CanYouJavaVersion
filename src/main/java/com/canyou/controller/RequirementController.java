@@ -248,4 +248,9 @@ public class RequirementController extends AbstractController{
 			return failMessage(e.getMessage());
 		}
 	}
+	
+	public boolean isAuthorizedSection(int id, HttpSession session){
+		SectionRequirementVO requirement = sectionRequirementService.findById(id);
+		return requirement.getAccountId() == loginId(session);
+	}
 }

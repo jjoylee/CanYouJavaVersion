@@ -632,4 +632,28 @@ public class RequirementControllerTest {
 		verify(sectionRequirement,times(1)).setLectureTypeId(2);
 		verify(sectionRequirementService,times(1)).insert(sectionRequirement);
 	}
+	
+	@Test
+	public void isAuthorizedSection_true_test() {
+		when(sectionRequirementService.findById(1)).thenReturn(sectionRequirement);
+		loginIdWhen();
+		when(sectionRequirement.getAccountId()).thenReturn(1);
+		assertTrue(spy.isAuthorizedSection(1, session));
+		verify(sectionRequirementService,times(1)).findById(1);
+		loginIdVerify();
+		verify(sectionRequirement,times(1)).getAccountId();
+	}
+	
+	@Test
+	public void isAuthorizedSection_false_test() {
+		when(sectionRequirementService.findById(1)).thenReturn(sectionRequirement);
+		loginIdWhen();
+		when(sectionRequirement.getAccountId()).thenReturn(2);
+		assertFalse(spy.isAuthorizedSection(1, session));
+		verify(sectionRequirementService,times(1)).findById(1);
+		loginIdVerify();
+		verify(sectionRequirement,times(1)).getAccountId();
+	}
+	
+	
 }
