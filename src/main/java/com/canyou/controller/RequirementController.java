@@ -226,7 +226,26 @@ public class RequirementController extends AbstractController{
 	}
 	
 	@RequestMapping(value = "/sectionRegister", method = RequestMethod.GET)
-	public String sectionRegister(){
+	public String sectionRegister(HttpSession session){
+		if(existSectionRequirement(loginId(session)))
+			return "redirect:/requirement/section";
 		return "/requirement/sectionRegister";
+	}
+	
+	public boolean existSectionRequirement(int accountId){
+		return (sectionRequirementService.findByAccountIdForCheck(accountId) != null);
+	}
+	
+	@RequestMapping(value = "/sectionRegister", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> sectionRegister(SectionRequirementVO requirement ,HttpSession session){
+		try{
+			requirement.setAccountId(loginId(session));
+			requirement.setLectureTypeId(2);
+			sectionRequirementService.insert(requirement);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
 	}
 }

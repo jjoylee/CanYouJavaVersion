@@ -42,6 +42,7 @@ public class RequirementControllerTest {
 	LectureCategoryService categoryService;
 	LectureCategoryRequirementVO categoryRequirement;
 	LectureTypeRequirementVO typeRequirement;
+	SectionRequirementVO sectionRequirement;
 	Map<String, String> expect;
 	DataAccessException exception;
 	List<LectureCategoryVO> categoryList;
@@ -576,7 +577,59 @@ public class RequirementControllerTest {
 	}
 	
 	@Test
+	public void sectionRegister_get_exist_test() {
+		loginIdWhen();
+		doReturn(true).when(spy).existSectionRequirement(1);
+		assertEquals("redirect:/requirement/section",spy.sectionRegister(session));
+		verify(spy,times(1)).existSectionRequirement(1);
+		loginIdVerify();
+	}
+	
+	@Test
 	public void sectionRegister_get_test() {
-		assertEquals("/requirement/sectionRegister",ctrl.sectionRegister());
+		loginIdWhen();
+		doReturn(false).when(spy).existSectionRequirement(1);
+		assertEquals("/requirement/sectionRegister",spy.sectionRegister(session));
+		verify(spy,times(1)).existSectionRequirement(1);
+		loginIdVerify();
+	}
+	
+	@Test
+	public void existSectionRequirement_true_test() {
+		when(sectionRequirementService.findByAccountIdForCheck(1)).thenReturn(sectionRequirement);
+		assertTrue(spy.existSectionRequirement(1));
+		verify(sectionRequirementService,times(1)).findByAccountIdForCheck(1);
+	}
+	
+	@Test
+	public void existSectionRequirement_false_test() {
+		assertFalse(spy.existSectionRequirement(1));
+		when(sectionRequirementService.findByAccountIdForCheck(1)).thenReturn(null);
+		verify(sectionRequirementService,times(1)).findByAccountIdForCheck(1);
+	}
+	
+	@Test
+	public void sectionRegister_post_success_test() {
+		loginIdWhen();
+		successMessageWhen();
+		assertEquals(expect,spy.sectionRegister(sectionRequirement, session));
+		sectionRegisterInsertVerify();
+		successMessageVerify();
+	}
+	
+	@Test
+	public void sectionRegister_post_fail_exception_test() {
+		loginIdWhen();
+		exceptionWhen();
+		when(sectionRequirementService.insert(sectionRequirement)).thenThrow(exception);
+		assertEquals(expect,spy.sectionRegister(sectionRequirement, session));
+		sectionRegisterInsertVerify();
+		failMessageVerify("데이터 에러");
+	}
+
+	private void sectionRegisterInsertVerify() {
+		verify(sectionRequirement,times(1)).setAccountId(1);
+		verify(sectionRequirement,times(1)).setLectureTypeId(2);
+		verify(sectionRequirementService,times(1)).insert(sectionRequirement);
 	}
 }
