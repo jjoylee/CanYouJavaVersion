@@ -479,16 +479,28 @@ public class RequirementControllerTest {
 	@Test
 	public void typeUpdate_get_not_authorized_test() {
 		doReturn(false).when(spy).isAuthorizedType(1, session);
-		String result = spy.typeUpdate(1, session);
+		String result = spy.typeUpdate(1, session, model);
 		verify(spy,times(1)).isAuthorizedType(1, session);
 		assertEquals("redirect:/requirement/type",result);
 	}
 	
 	@Test
 	public void typeUpdate_get_success_test() {
-		doReturn(false).when(spy).isAuthorizedType(1, session);
-		String result = spy.typeUpdate(1, session);
+		doReturn(true).when(spy).isAuthorizedType(1, session);
+		when(typeRequirementService.findById(1)).thenReturn(typeRequirement);
+		when(categoryService.findLectureTypeExist()).thenReturn(categoryList);
+		when(typeRequirement.getLectureCategoryId()).thenReturn(2);
+		when(typeService.findByCategoryId(2)).thenReturn(typeList);
+		assertEquals("/requirement/typeUpdate",spy.typeUpdate(1, session, model));
 		verify(spy,times(1)).isAuthorizedType(1, session);
-		assertEquals("redirect:/requirement/type",result);
+		verify(typeRequirementService,times(1)).findById(1);
+		verify(categoryService,times(1)).findLectureTypeExist();
+		verify(typeRequirement,times(1)).getLectureCategoryId();
+		verify(typeService,times(1)).findByCategoryId(2);
+		verify(model,times(1)).addAttribute("categoryList",categoryList);
+		verify(model,times(1)).addAttribute("typeList", typeList);
+		verify(model,times(1)).addAttribute("requirement",typeRequirement);
 	}
+	
+	
 }

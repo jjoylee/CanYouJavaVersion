@@ -30,6 +30,7 @@
 		</div>
 	</layout:put>
 	<layout:put block="scripts">
+		<script src="../resources/scripts/customValidator.js"></script>
 	    <script type="text/javascript">   
 		    $("#categoryRegisterFrm").validate({
 		        rules: {

@@ -179,11 +179,16 @@ public class RequirementController extends AbstractController{
 		}
 	}
 	
-	@RequestMapping(value = "/typeUpdate}")
-	@ResponseBody
-	public String typeUpdate(@RequestParam("id")int id, HttpSession session){
+	@RequestMapping(value = "/typeUpdate", method = RequestMethod.GET)
+	public String typeUpdate(@RequestParam("id")int id, HttpSession session, Model model){
 		if(!isAuthorizedType(id,session))
 			return "redirect:/requirement/type";
-		return "";
+		LectureTypeRequirementVO requirement = typeRequirementService.findById(id);
+		List<LectureCategoryVO> categoryList = categoryService.findLectureTypeExist();
+		List<LectureTypeVO> typeList = typeService.findByCategoryId(requirement.getLectureCategoryId());
+		model.addAttribute("categoryList",categoryList);
+		model.addAttribute("typeList", typeList);
+		model.addAttribute("requirement",requirement);
+		return "/requirement/typeUpdate";
 	}
 }
