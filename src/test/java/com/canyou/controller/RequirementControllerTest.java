@@ -475,4 +475,20 @@ public class RequirementControllerTest {
 		failMessageVerify("데이터 에러");
 		assertEquals(expect, result);
 	}
+	
+	@Test
+	public void typeUpdate_get_not_authorized_test() {
+		doReturn(false).when(spy).isAuthorizedType(1, session);
+		String result = spy.typeUpdate(1, session);
+		verify(spy,times(1)).isAuthorizedType(1, session);
+		assertEquals("redirect:/requirement/type",result);
+	}
+	
+	@Test
+	public void typeUpdate_get_success_test() {
+		doReturn(false).when(spy).isAuthorizedType(1, session);
+		String result = spy.typeUpdate(1, session);
+		verify(spy,times(1)).isAuthorizedType(1, session);
+		assertEquals("redirect:/requirement/type",result);
+	}
 }

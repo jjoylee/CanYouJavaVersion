@@ -178,4 +178,12 @@ public class RequirementController extends AbstractController{
 			return failMessage(e.getMessage());
 		}
 	}
+	
+	@RequestMapping(value = "/typeUpdate}")
+	@ResponseBody
+	public String typeUpdate(@RequestParam("id")int id, HttpSession session){
+		if(!isAuthorizedType(id,session))
+			return "redirect:/requirement/type";
+		return "";
+	}
 }

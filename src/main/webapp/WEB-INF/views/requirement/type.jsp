@@ -57,7 +57,7 @@
 
             $("button[name='update']").click(function () {
                 var id = $(this).data("id");
-                var url = "/requirement/typeUpdate/" + id;
+                var url = "/requirement/typeUpdate?id" + id;
                 $(location).attr('href', url);
             });
     	</script>
