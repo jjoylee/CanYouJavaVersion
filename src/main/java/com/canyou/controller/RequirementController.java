@@ -253,4 +253,13 @@ public class RequirementController extends AbstractController{
 		SectionRequirementVO requirement = sectionRequirementService.findById(id);
 		return requirement.getAccountId() == loginId(session);
 	}
+	
+	@RequestMapping(value = "/sectionUpdate", method = RequestMethod.GET)
+	public String sectionUpdate(@RequestParam("id") int id ,HttpSession session, Model model){
+		if(!isAuthorizedSection(id,session))
+			return "redirect:/requirement/section";
+		SectionRequirementVO requirement = sectionRequirementService.findById(id);
+		model.addAttribute("requirement",requirement);
+		return "/requirement/sectionUpdate";
+	}
 }

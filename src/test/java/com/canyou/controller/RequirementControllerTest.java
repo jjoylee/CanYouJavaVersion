@@ -655,5 +655,20 @@ public class RequirementControllerTest {
 		verify(sectionRequirement,times(1)).getAccountId();
 	}
 	
+	@Test
+	public void sectionUpdate_notAuthorized_test() {
+		doReturn(false).when(spy).isAuthorizedSection(1, session);
+		assertEquals("redirect:/requirement/section",spy.sectionUpdate(1, session, model));
+		verify(spy,times(1)).isAuthorizedSection(1, session);
+	}
 	
+	@Test
+	public void sectionUpdate_authorized_test() {
+		doReturn(true).when(spy).isAuthorizedSection(1, session);
+		when(sectionRequirementService.findById(1)).thenReturn(sectionRequirement);
+		assertEquals("/requirement/sectionUpdate",spy.sectionUpdate(1, session, model));
+		verify(spy,times(1)).isAuthorizedSection(1, session);
+		verify(sectionRequirementService,times(1)).findById(1);
+		verify(model,times(1)).addAttribute("requirement",sectionRequirement);
+	}
 }
