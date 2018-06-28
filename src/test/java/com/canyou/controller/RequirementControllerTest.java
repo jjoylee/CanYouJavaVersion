@@ -24,10 +24,13 @@ import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
 import com.canyou.model.LectureType.LectureTypeVO;
 import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementVO;
+import com.canyou.model.Section.SectionVO;
+import com.canyou.model.SectionRequirement.SectionRequirementVO;
 import com.canyou.service.LectureCategory.LectureCategoryService;
 import com.canyou.service.LectureCategoryRequirement.LectureCategoryRequirementService;
 import com.canyou.service.LectureType.LectureTypeService;
 import com.canyou.service.LectureTypeRequirement.LectureTypeRequirementService;
+import com.canyou.service.SectionRequirement.SectionRequirementService;
 
 public class RequirementControllerTest {
 	
@@ -45,6 +48,7 @@ public class RequirementControllerTest {
 	List<LectureTypeVO> typeList;
 	LectureTypeRequirementService typeRequirementService;
 	LectureTypeService typeService;
+	SectionRequirementService sectionRequirementService;
 	
 	@Before
 	public void setUp() throws IllegalArgumentException, IllegalAccessException{
@@ -561,12 +565,12 @@ public class RequirementControllerTest {
 	
 	@Test
 	public void section_test() {
-		typeUpdateWhen();
-		exceptionWhen();
-		when(typeRequirementService.update(typeRequirement)).thenThrow(exception);
-		Map<String, String> result = spy.typeUpdate(1, session, typeRequirement);
-		typeUpdateVerify();
-		failMessageVerify("데이터 에러");
-		assertEquals(expect,result);
+		List<SectionRequirementVO> requirement = mock(List.class);
+		loginIdWhen();
+		when(sectionRequirementService.findByAccountId(1)).thenReturn(requirement);
+		assertEquals("/requirement/section",spy.section(session, model));
+		loginIdVerify();
+		verify(sectionRequirementService,times(1)).findByAccountId(1);
+		verify(model,times(1)).addAttribute("list",requirement);
 	}
 }
