@@ -58,6 +58,7 @@ public class RequirementControllerTest {
 		ctrl.categoryService = categoryService;
 		ctrl.typeService = typeService;
 		ctrl.typeRequirementService = typeRequirementService;
+		ctrl.sectionRequirementService = sectionRequirementService;
 		spy = spy(ctrl);
 	}
 	
@@ -572,5 +573,10 @@ public class RequirementControllerTest {
 		loginIdVerify();
 		verify(sectionRequirementService,times(1)).findByAccountId(1);
 		verify(model,times(1)).addAttribute("list",requirement);
+	}
+	
+	@Test
+	public void sectionRegister_get_test() {
+		assertEquals("/requirement/sectionRegister",ctrl.sectionRegister());
 	}
 }

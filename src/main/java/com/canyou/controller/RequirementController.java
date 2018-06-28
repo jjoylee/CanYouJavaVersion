@@ -224,4 +224,9 @@ public class RequirementController extends AbstractController{
 		model.addAttribute("list",list);
 		return "/requirement/section";
 	}
+	
+	@RequestMapping(value = "/sectionRegister", method = RequestMethod.GET)
+	public String sectionRegister(){
+		return "/requirement/sectionRegister";
+	}
 }

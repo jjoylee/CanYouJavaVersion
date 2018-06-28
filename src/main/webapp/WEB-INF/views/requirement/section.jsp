@@ -34,7 +34,7 @@
 		    </table>
 		    <p></p>
 		    <p></p>
-		    <a class="pure-button pure-button-primary" href="/Requirement/SectionRegister">영역요건등록</a>
+		    <a class="pure-button pure-button-primary" href="/requirement/sectionRegister">영역요건등록</a>
 		</div>
 	</layout:put>
 	<layout:put block="scripts">
