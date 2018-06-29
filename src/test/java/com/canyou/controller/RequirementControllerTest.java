@@ -656,19 +656,76 @@ public class RequirementControllerTest {
 	}
 	
 	@Test
-	public void sectionUpdate_notAuthorized_test() {
+	public void sectionUpdate_get_notAuthorized_test() {
 		doReturn(false).when(spy).isAuthorizedSection(1, session);
 		assertEquals("redirect:/requirement/section",spy.sectionUpdate(1, session, model));
 		verify(spy,times(1)).isAuthorizedSection(1, session);
 	}
 	
 	@Test
-	public void sectionUpdate_authorized_test() {
+	public void sectionUpdate_get_authorized_test() {
 		doReturn(true).when(spy).isAuthorizedSection(1, session);
 		when(sectionRequirementService.findById(1)).thenReturn(sectionRequirement);
 		assertEquals("/requirement/sectionUpdate",spy.sectionUpdate(1, session, model));
 		verify(spy,times(1)).isAuthorizedSection(1, session);
 		verify(sectionRequirementService,times(1)).findById(1);
 		verify(model,times(1)).addAttribute("requirement",sectionRequirement);
+	}
+	
+	@Test
+	public void sectionUpdate_post_success_test() {
+		loginIdWhen();
+		successMessageWhen();
+		assertEquals(expect,spy.sectionUpdate(2, sectionRequirement, session));
+		sectionRequirementUpdateVerify();
+		successMessageVerify();
+	}
+
+	private void sectionRequirementUpdateVerify() {
+		verify(sectionRequirement,times(1)).setAccountId(1);
+		verify(sectionRequirement,times(1)).setId(2);
+		verify(sectionRequirement,times(1)).setLectureTypeId(2);
+		verify(sectionRequirementService,times(1)).update(sectionRequirement);
+		
+	}
+	
+	@Test
+	public void sectionUpdate_post_fail_exception_test() {
+		loginIdWhen();
+		exceptionWhen();
+		when(sectionRequirementService.update(sectionRequirement)).thenThrow(exception);
+		assertEquals(expect,spy.sectionUpdate(2, sectionRequirement, session));
+		sectionRequirementUpdateVerify();
+		failMessageVerify("데이터 에러");
+	}
+	
+	@Test
+	public void sectionDelete_fail_notAuthorized_test(){
+		doReturn(false).when(spy).isAuthorizedSection(1, session);
+		failMessageWhen("접근 불가능한 페이지입니다.");
+		assertEquals(expect, spy.sectionDelete(1, session));
+		verify(spy,times(1)).isAuthorizedSection(1, session);
+		failMessageVerify("접근 불가능한 페이지입니다.");
+	}
+	
+	@Test
+	public void sectionDelete_success_test(){
+		doReturn(true).when(spy).isAuthorizedSection(1, session);
+		successMessageWhen();
+		assertEquals(expect, spy.sectionDelete(1, session));
+		verify(spy,times(1)).isAuthorizedSection(1, session);
+		verify(sectionRequirementService,times(1)).delete(1);
+		successMessageVerify();
+	}
+	
+	@Test
+	public void sectionDelete_fail_exception_test(){
+		doReturn(true).when(spy).isAuthorizedSection(1, session);
+		exceptionWhen();
+		when(sectionRequirementService.delete(1)).thenThrow(exception);
+		assertEquals(expect, spy.sectionDelete(1, session));
+		verify(spy,times(1)).isAuthorizedSection(1, session);
+		verify(sectionRequirementService,times(1)).delete(1);
+		failMessageVerify("데이터 에러");
 	}
 }

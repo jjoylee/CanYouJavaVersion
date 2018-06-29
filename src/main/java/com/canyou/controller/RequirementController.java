@@ -262,4 +262,31 @@ public class RequirementController extends AbstractController{
 		model.addAttribute("requirement",requirement);
 		return "/requirement/sectionUpdate";
 	}
+	
+	@RequestMapping(value = "/sectionUpdate/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> sectionUpdate(@PathVariable("id") int id, SectionRequirementVO requirement ,HttpSession session){
+		try{
+			requirement.setId(id);
+			requirement.setAccountId(loginId(session));
+			requirement.setLectureTypeId(2);
+			sectionRequirementService.update(requirement);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/sectionDelete/{id}")
+	@ResponseBody
+	public Map<String,String> sectionDelete(@PathVariable("id") int id, HttpSession session){
+		if(!isAuthorizedSection(id,session))
+			return failMessage("접근 불가능한 페이지입니다.");
+		try{
+			sectionRequirementService.delete(id);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
+	}
 }
