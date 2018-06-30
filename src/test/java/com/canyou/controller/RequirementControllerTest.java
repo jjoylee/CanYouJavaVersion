@@ -765,4 +765,51 @@ public class RequirementControllerTest {
 		loginIdVerify();
 		verify(spy,times(1)).existScoreRequirement(1);
 	}
+	
+	@Test
+	public void isAuthorizedScore_authorized_test(){
+		when(scoreRequirementService.findById(1)).thenReturn(scoreRequirement);
+		when(scoreRequirement.getAccountId()).thenReturn(1);
+		loginIdWhen();
+		assertTrue(spy.isAuthorizedScore(1, session));
+		loginIdVerify();
+		verify(scoreRequirementService,times(1)).findById(1);
+		verify(scoreRequirement,times(1)).getAccountId();
+	}
+	
+	@Test
+	public void isAuthorizedScore_notAuthorized_test(){
+		when(scoreRequirementService.findById(1)).thenReturn(scoreRequirement);
+		when(scoreRequirement.getAccountId()).thenReturn(2);
+		loginIdWhen();
+		assertFalse(spy.isAuthorizedScore(1, session));
+		loginIdVerify();
+		verify(scoreRequirementService,times(1)).findById(1);
+		verify(scoreRequirement,times(1)).getAccountId();
+	}
+	
+	@Test
+	public void scoreRegister_post_success_test(){
+		loginIdWhen();
+		successMessageWhen();
+		assertEquals(expect,spy.scoreRegister(scoreRequirement, session));
+		scoreRequirementInsertVerfiy();
+		successMessageVerify();
+	}
+
+	private void scoreRequirementInsertVerfiy() {
+		loginIdVerify();
+		verify(scoreRequirement,times(1)).setAccountId(1);
+		verify(scoreRequirementService,times(1)).insert(scoreRequirement);
+	}
+	
+	@Test
+	public void scoreRegister_post_fail_exception_test(){
+		loginIdWhen();
+		exceptionWhen();
+		when(scoreRequirementService.insert(scoreRequirement)).thenThrow(exception);
+		assertEquals(expect,spy.scoreRegister(scoreRequirement, session));
+		scoreRequirementInsertVerfiy();
+		failMessageVerify("데이터 에러");
+	}
 }

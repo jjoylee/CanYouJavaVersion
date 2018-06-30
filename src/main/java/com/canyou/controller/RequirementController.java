@@ -312,4 +312,26 @@ public class RequirementController extends AbstractController{
 			return "redirect:/requirement/score";
 		return "/requirement/scoreRegister";
 	}
+	
+	@RequestMapping(value = "/scoreRegister", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> scoreRegister(ScoreRequirementVO requirement ,HttpSession session){
+		try{
+			requirement.setAccountId(loginId(session));
+			scoreRequirementService.insert(requirement);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
+	}
+	
+	public boolean isAuthorizedScore(int id, HttpSession session){
+		ScoreRequirementVO requirement = scoreRequirementService.findById(id);
+		return requirement.getAccountId() == loginId(session);
+	}
+	
+	@RequestMapping(value = "/scoreUpdate", method = RequestMethod.GET)
+	public String scoreUpdate(@RequestParam("id") int id ,HttpSession session, Model model){
+		return "";
+	}
 }
