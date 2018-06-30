@@ -332,6 +332,10 @@ public class RequirementController extends AbstractController{
 	
 	@RequestMapping(value = "/scoreUpdate", method = RequestMethod.GET)
 	public String scoreUpdate(@RequestParam("id") int id ,HttpSession session, Model model){
-		return "";
+		if(!isAuthorizedScore(id,session))
+			return "redirect:/requirement/score";
+		ScoreRequirementVO requirement = scoreRequirementService.findById(id);
+		model.addAttribute("requirement",requirement);
+		return "/requirement/scoreUpdate";
 	}
 }

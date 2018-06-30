@@ -812,4 +812,21 @@ public class RequirementControllerTest {
 		scoreRequirementInsertVerfiy();
 		failMessageVerify("데이터 에러");
 	}
+	
+	@Test
+	public void scoreUpdate_get_notAuthorized_test(){
+		doReturn(false).when(spy).isAuthorizedScore(1, session);
+		assertEquals("redirect:/requirement/score",spy.scoreUpdate(1, session, model));
+		verify(spy,times(1)).isAuthorizedScore(1, session);
+	}
+	
+	@Test
+	public void scoreUpdate_get_authorized_test(){
+		doReturn(true).when(spy).isAuthorizedScore(1, session);
+		when(scoreRequirementService.findById(1)).thenReturn(scoreRequirement);
+		assertEquals("/requirement/scoreUpdate",spy.scoreUpdate(1, session, model));
+		verify(spy,times(1)).isAuthorizedScore(1, session);
+		verify(scoreRequirementService,times(1)).findById(1);
+		verify(model,times(1)).addAttribute("requirement", scoreRequirement);
+	}
 }

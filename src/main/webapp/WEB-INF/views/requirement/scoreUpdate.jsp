@@ -7,12 +7,12 @@
 		    <h2>총학점요건 수정</h2>
 		</div>
 		<div class="content">
-		    <form class="pure-form pure-form-aligned" id="scoreUpdateFrm" method="post" action="/requirement/scoreUpdate/${item.id}">
+		    <form class="pure-form pure-form-aligned" id="scoreUpdateFrm" method="post" action="/requirement/scoreUpdate/${requirement.id}">
 		        <fieldset>
 		
 		            <div class="pure-control-group">
 		                <label for="cutline">총학점 요건</label>
-		                <input name="cutline" id="cutline" type="text" placeholder="총학점을 입력하세요." value="${item.cutline}" required>
+		                <input name="cutline" id="cutline" type="text" placeholder="총학점을 입력하세요." value="${requirement.cutline}" required>
 		            </div>
 		
 		            <div class="pure-controls">

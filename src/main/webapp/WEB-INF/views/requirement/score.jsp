@@ -48,10 +48,10 @@
 	                    $(location).attr('href', "/requirement/score");
 	                }
 	            });
-	        });s
+	        });
 	        $("button[name='update']").click(function () {
 	            var id = $(this).data("id");
-	            var url = "/requirement/scoreUpdate/" + id;
+	            var url = "/requirement/scoreUpdate?id=" + id;
 	            $(location).attr('href', url);
 	        });
     	</script>
