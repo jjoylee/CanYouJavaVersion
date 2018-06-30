@@ -338,4 +338,16 @@ public class RequirementController extends AbstractController{
 		model.addAttribute("requirement",requirement);
 		return "/requirement/scoreUpdate";
 	}
+	
+	@RequestMapping(value = "/scoreUpdate/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> scoreUpdate(@PathVariable("id") int id ,HttpSession session, ScoreRequirementVO requirement){
+		try{
+			requirement.setAccountId(loginId(session));
+			scoreRequirementService.update(requirement);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
+	}
 }

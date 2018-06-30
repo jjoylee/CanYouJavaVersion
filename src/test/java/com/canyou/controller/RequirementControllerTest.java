@@ -829,4 +829,29 @@ public class RequirementControllerTest {
 		verify(scoreRequirementService,times(1)).findById(1);
 		verify(model,times(1)).addAttribute("requirement", scoreRequirement);
 	}
+	
+	@Test
+	public void scoreUpdate_post_success_test(){
+		loginIdWhen();
+		successMessageWhen();
+		assertEquals(expect,spy.scoreUpdate(1, session, scoreRequirement));
+		scoreRequirementUpdateVerify();
+		successMessageVerify();
+	}
+
+	private void scoreRequirementUpdateVerify() {
+		loginIdVerify();
+		verify(scoreRequirement,times(1)).setAccountId(1);
+		verify(scoreRequirementService,times(1)).update(scoreRequirement);
+	}
+	
+	@Test
+	public void scoreUpdate_post_fail_exception_test(){
+		loginIdWhen();
+		exceptionWhen();
+		when(scoreRequirementService.update(scoreRequirement)).thenThrow(exception);
+		assertEquals(expect,spy.scoreUpdate(1, session, scoreRequirement));
+		scoreRequirementUpdateVerify();
+		failMessageVerify("데이터 에러");
+	}
 }
