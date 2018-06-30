@@ -305,4 +305,11 @@ public class RequirementController extends AbstractController{
 	public boolean existScoreRequirement(int accountId){
 		return (scoreRequirementService.findByAccountIdForCheck(accountId) != null);
 	}
+	
+	@RequestMapping(value = "/scoreRegister", method = RequestMethod.GET)
+	public String scoreRegister(HttpSession session){
+		if(existScoreRequirement(loginId(session)))
+			return "redirect:/requirement/score";
+		return "/requirement/scoreRegister";
+	}
 }

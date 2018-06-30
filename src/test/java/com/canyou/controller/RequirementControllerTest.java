@@ -747,4 +747,22 @@ public class RequirementControllerTest {
 		assertFalse(ctrl.existScoreRequirement(1));
 		verify(scoreRequirementService,times(1)).findByAccountIdForCheck(1);
 	}
+	
+	@Test
+	public void scoreRegister_get_exist_test(){
+		loginIdWhen();
+		doReturn(true).when(spy).existScoreRequirement(1);
+		assertEquals("redirect:/requirement/score",spy.scoreRegister(session));
+		loginIdVerify();
+		verify(spy,times(1)).existScoreRequirement(1);
+	}
+	
+	@Test
+	public void scoreRegister_get_notexist_test(){
+		loginIdWhen();
+		doReturn(false).when(spy).existScoreRequirement(1);
+		assertEquals("/requirement/scoreRegister",spy.scoreRegister(session));
+		loginIdVerify();
+		verify(spy,times(1)).existScoreRequirement(1);
+	}
 }
