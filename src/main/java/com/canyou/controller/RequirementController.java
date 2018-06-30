@@ -289,4 +289,11 @@ public class RequirementController extends AbstractController{
 			return failMessage(e.getMessage());
 		}
 	}
+	
+	@RequestMapping(value = "/section", method = RequestMethod.GET)
+	public String score( HttpSession session, Model model){
+		List<SectionRequirementVO> list = sectionRequirementService.findByAccountId(loginId(session));
+		model.addAttribute("list",list);
+		return "/requirement/section";
+	}
 }
