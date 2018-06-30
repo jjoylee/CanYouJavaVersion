@@ -18,11 +18,13 @@ import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
 import com.canyou.model.LectureType.LectureTypeVO;
 import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementVO;
+import com.canyou.model.ScoreRequirement.ScoreRequirementVO;
 import com.canyou.model.SectionRequirement.SectionRequirementVO;
 import com.canyou.service.LectureCategory.LectureCategoryService;
 import com.canyou.service.LectureCategoryRequirement.LectureCategoryRequirementService;
 import com.canyou.service.LectureType.LectureTypeService;
 import com.canyou.service.LectureTypeRequirement.LectureTypeRequirementService;
+import com.canyou.service.ScoreRequirement.ScoreRequirementService;
 import com.canyou.service.SectionRequirement.SectionRequirementService;
 
 @Controller
@@ -43,6 +45,9 @@ public class RequirementController extends AbstractController{
 	
 	@Autowired 
 	SectionRequirementService sectionRequirementService;
+
+	@Autowired 
+	ScoreRequirementService scoreRequirementService;
 	
 	@RequestMapping(value = "/category", method = RequestMethod.GET)
 	public String category(Model model, HttpSession session){
@@ -290,10 +295,10 @@ public class RequirementController extends AbstractController{
 		}
 	}
 	
-	@RequestMapping(value = "/section", method = RequestMethod.GET)
+	@RequestMapping(value = "/score", method = RequestMethod.GET)
 	public String score( HttpSession session, Model model){
-		List<SectionRequirementVO> list = sectionRequirementService.findByAccountId(loginId(session));
+		List<ScoreRequirementVO> list = scoreRequirementService.findByAccountId(loginId(session));
 		model.addAttribute("list",list);
-		return "/requirement/section";
+		return "/requirement/score";
 	}
 }

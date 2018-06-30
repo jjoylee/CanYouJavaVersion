@@ -24,12 +24,14 @@ import com.canyou.model.LectureCategory.LectureCategoryVO;
 import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
 import com.canyou.model.LectureType.LectureTypeVO;
 import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementVO;
+import com.canyou.model.ScoreRequirement.ScoreRequirementVO;
 import com.canyou.model.Section.SectionVO;
 import com.canyou.model.SectionRequirement.SectionRequirementVO;
 import com.canyou.service.LectureCategory.LectureCategoryService;
 import com.canyou.service.LectureCategoryRequirement.LectureCategoryRequirementService;
 import com.canyou.service.LectureType.LectureTypeService;
 import com.canyou.service.LectureTypeRequirement.LectureTypeRequirementService;
+import com.canyou.service.ScoreRequirement.ScoreRequirementService;
 import com.canyou.service.SectionRequirement.SectionRequirementService;
 
 public class RequirementControllerTest {
@@ -43,6 +45,7 @@ public class RequirementControllerTest {
 	LectureCategoryRequirementVO categoryRequirement;
 	LectureTypeRequirementVO typeRequirement;
 	SectionRequirementVO sectionRequirement;
+	ScoreRequirementVO scoreRequirement;
 	Map<String, String> expect;
 	DataAccessException exception;
 	List<LectureCategoryVO> categoryList;
@@ -50,6 +53,7 @@ public class RequirementControllerTest {
 	LectureTypeRequirementService typeRequirementService;
 	LectureTypeService typeService;
 	SectionRequirementService sectionRequirementService;
+	ScoreRequirementService scoreRequirementService;
 	
 	@Before
 	public void setUp() throws IllegalArgumentException, IllegalAccessException{
@@ -60,6 +64,7 @@ public class RequirementControllerTest {
 		ctrl.typeService = typeService;
 		ctrl.typeRequirementService = typeRequirementService;
 		ctrl.sectionRequirementService = sectionRequirementService;
+		ctrl.scoreRequirementService = scoreRequirementService;
 		spy = spy(ctrl);
 	}
 	
@@ -719,13 +724,13 @@ public class RequirementControllerTest {
 	}
 	
 	@Test
-	public void sectionDelete_fail_exception_test(){
-		doReturn(true).when(spy).isAuthorizedSection(1, session);
-		exceptionWhen();
-		when(sectionRequirementService.delete(1)).thenThrow(exception);
-		assertEquals(expect, spy.sectionDelete(1, session));
-		verify(spy,times(1)).isAuthorizedSection(1, session);
-		verify(sectionRequirementService,times(1)).delete(1);
-		failMessageVerify("데이터 에러");
+	public void scoreRequirement_get_test(){
+		List<ScoreRequirementVO> list = mock(List.class);
+		loginIdWhen();
+		when(scoreRequirementService.findByAccountId(1)).thenReturn(list);
+		assertEquals("/requirement/score",spy.score(session, model));
+		loginIdVerify();
+		verify(scoreRequirementService,times(1)).findByAccountId(1);
+		verify(model,times(1)).addAttribute("list",list);
 	}
 }
