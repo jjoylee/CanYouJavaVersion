@@ -301,4 +301,8 @@ public class RequirementController extends AbstractController{
 		model.addAttribute("list",list);
 		return "/requirement/score";
 	}
+	
+	public boolean existScoreRequirement(int accountId){
+		return (scoreRequirementService.findByAccountIdForCheck(accountId) != null);
+	}
 }

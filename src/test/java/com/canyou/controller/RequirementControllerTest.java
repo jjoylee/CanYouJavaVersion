@@ -733,4 +733,18 @@ public class RequirementControllerTest {
 		verify(scoreRequirementService,times(1)).findByAccountId(1);
 		verify(model,times(1)).addAttribute("list",list);
 	}
+	
+	@Test
+	public void existScoreRequirement_true_test(){
+		when(scoreRequirementService.findByAccountIdForCheck(1)).thenReturn(scoreRequirement);
+		assertTrue(ctrl.existScoreRequirement(1));
+		verify(scoreRequirementService,times(1)).findByAccountIdForCheck(1);
+	}
+	
+	@Test
+	public void existScoreRequirement_false_test(){
+		when(scoreRequirementService.findByAccountIdForCheck(1)).thenReturn(null);
+		assertFalse(ctrl.existScoreRequirement(1));
+		verify(scoreRequirementService,times(1)).findByAccountIdForCheck(1);
+	}
 }
