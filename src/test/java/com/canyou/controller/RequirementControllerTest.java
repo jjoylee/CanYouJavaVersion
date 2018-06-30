@@ -854,4 +854,37 @@ public class RequirementControllerTest {
 		scoreRequirementUpdateVerify();
 		failMessageVerify("데이터 에러");
 	}
+	
+	@Test
+	public void scoreDelete_fail_notAuthorized_test(){
+		doReturn(false).when(spy).isAuthorizedScore(1, session);
+		failMessageWhen("접근 불가능한 페이지입니다.");
+		assertEquals(expect, spy.scoreDelete(1, session));
+		verify(spy,times(1)).isAuthorizedScore(1, session);
+		failMessageVerify("접근 불가능한 페이지입니다.");
+	}
+	
+	@Test
+	public void scoreDelete_success_test(){
+		doReturn(true).when(spy).isAuthorizedScore(1, session);
+		successMessageWhen();
+		assertEquals(expect, spy.scoreDelete(1, session));
+		scoreRequirementDeleteVerify();
+		successMessageVerify();
+	}
+
+	private void scoreRequirementDeleteVerify() {
+		verify(spy,times(1)).isAuthorizedScore(1, session);
+		verify(scoreRequirementService,times(1)).delete(1);
+	}
+	
+	@Test
+	public void scoreDelete_fail_exception_test(){
+		doReturn(true).when(spy).isAuthorizedScore(1, session);
+		exceptionWhen();
+		when(scoreRequirementService.delete(1)).thenThrow(exception);
+		assertEquals(expect, spy.scoreDelete(1, session));
+		scoreRequirementDeleteVerify();
+		failMessageVerify("데이터 에러");
+	}
 }

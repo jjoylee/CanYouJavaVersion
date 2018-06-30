@@ -350,4 +350,17 @@ public class RequirementController extends AbstractController{
 			return failMessage(e.getMessage());
 		}
 	}
+	
+	@RequestMapping(value = "/scoreDelete/{id}")
+	@ResponseBody
+	public Map<String,String> scoreDelete(@PathVariable("id") int id ,HttpSession session){
+		if(!isAuthorizedScore(id,session))
+			return failMessage("접근 불가능한 페이지입니다.");
+		try{
+			scoreRequirementService.delete(id);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
+	}
 }

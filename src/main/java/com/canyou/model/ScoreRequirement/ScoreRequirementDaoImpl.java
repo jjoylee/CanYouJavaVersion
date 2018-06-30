@@ -24,7 +24,7 @@ public class ScoreRequirementDaoImpl implements ScoreRequirementDao{
 
 	@Override
 	public int delete(int id) {
-		String query = "delete from ScoreRequirement where id=?d";
+		String query = "delete from ScoreRequirement where id=?";
 		return jdbcTemplate.update(query,id);
 	}
 
