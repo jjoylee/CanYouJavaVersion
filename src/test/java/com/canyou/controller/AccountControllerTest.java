@@ -141,4 +141,10 @@ public class AccountControllerTest {
 		assertEquals("/account/useInfo", spy.useInfo(session));
 		verify(spy,times(1)).loginAccount(session);
 	}
+	
+	@Test
+	public void logout_test() {
+		assertEquals("/account/login",ctrl.logout(session));
+		verify(session,times(1)).invalidate();
+	}
 }

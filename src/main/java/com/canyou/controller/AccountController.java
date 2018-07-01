@@ -68,4 +68,10 @@ public class AccountController extends AbstractController{
 			return "redirect:/account/login";
 		return "/account/useInfo";
 	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "/account/login";
+	}
 }
