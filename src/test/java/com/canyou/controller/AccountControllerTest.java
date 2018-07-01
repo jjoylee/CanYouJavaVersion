@@ -181,4 +181,43 @@ public class AccountControllerTest {
 	private void failMessageWhen(String message) {
 		doReturn(expect).when(spy).failMessage(message);
 	}
+	
+	@Test
+	public void update_fail_password_differenet_test(){
+		doReturn(account).when(spy).loginAccount(session);
+		when(account.getPassword()).thenReturn("PWD");
+		failMessageWhen("현재 비밀번호가 다릅니다.");
+		assertEquals(expect,spy.update("PW1", "PW2",session));
+		verify(spy,times(1)).loginAccount(session);
+		verify(account,times(1)).getPassword();
+		failMessageVerify("현재 비밀번호가 다릅니다.");
+	}
+	@Test
+	public void update_success_test(){
+		doReturn(account).when(spy).loginAccount(session);
+		when(account.getPassword()).thenReturn("PW");
+		successMessageWhen();
+		assertEquals(expect,spy.update("PW", "PW1",session));
+		accountUpdateVerify();
+		verify(session,times(1)).setAttribute("loginAccount", account);
+		successMessageVerify();
+	}
+
+	private void accountUpdateVerify() {
+		verify(spy,times(1)).loginAccount(session);
+		verify(account,times(1)).getPassword();
+		verify(account,times(1)).setPassword("PW1");
+		verify(service,times(1)).update(account);
+	}
+	
+	@Test
+	public void update_fail_exception_test(){
+		doReturn(account).when(spy).loginAccount(session);
+		when(account.getPassword()).thenReturn("PW");
+		exceptionWhen();
+		when(service.update(account)).thenThrow(exception);
+		assertEquals(expect,spy.update("PW", "PW1",session));
+		accountUpdateVerify();
+		failMessageVerify("데이터 에러");
+	}
 }

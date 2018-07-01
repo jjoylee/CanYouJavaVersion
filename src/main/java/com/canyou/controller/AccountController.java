@@ -84,8 +84,18 @@ public class AccountController extends AbstractController{
 	}
 	
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public Map<String, String> update(@RequestParam("currentPwd") String currentPwd, @RequestParam("newPasswordChk") String newPasswordChk) {
-	
-		return successMessage();
+	@ResponseBody
+	public Map<String, String> update(@RequestParam("currentPwd") String currentPwd, @RequestParam("newPassword") String newPassword, HttpSession session) {
+		AccountVO account = loginAccount(session);
+		if(!account.getPassword().equals(currentPwd))
+			return failMessage("현재 비밀번호가 다릅니다.");
+		try{
+			account.setPassword(newPassword);
+			accountService.update(account);
+			session.setAttribute("loginAccount", account);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
 	}
 }

@@ -98,7 +98,7 @@
 	                    }
 	                });
 	            } else {
-	                var url = "/Lecture/List";
+	                var url = "/lecture/list";
 	                $(location).attr('href', url);
 	            }
 	        });
