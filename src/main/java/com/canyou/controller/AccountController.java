@@ -74,4 +74,18 @@ public class AccountController extends AbstractController{
 		session.invalidate();
 		return "/account/login";
 	}
+	
+	
+	@RequestMapping(value = "/update", method = RequestMethod.GET)
+	public String update(HttpSession session) {
+		if(loginAccount(session) == null)
+			return "redirect:/account/login";
+		return "/account/update";
+	}
+	
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public Map<String, String> update(@RequestParam("currentPwd") String currentPwd, @RequestParam("newPasswordChk") String newPasswordChk) {
+	
+		return successMessage();
+	}
 }

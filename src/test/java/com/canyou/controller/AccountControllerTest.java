@@ -29,6 +29,7 @@ public class AccountControllerTest {
 	AccountVO account;
 	HttpSession session;
 	Map<String,String> expect;
+	DataAccessException exception;
 	
 	@Before 
 	public void setUp() throws IllegalArgumentException, IllegalAccessException{
@@ -58,9 +59,9 @@ public class AccountControllerTest {
 	@Test 
 	public void login_email_not_exist_Test(){
 		when(service.findByEmail(any(String.class))).thenReturn(null);
-		doReturn(expect).when(spy).failMessage("존재하지 않는 이메일입니다.");
+		failMessageWhen("존재하지 않는 이메일입니다.");
 		Map<String, String> result = spy.login("email", "password", session);
-		verify(spy, times(1)).failMessage("존재하지 않는 이메일입니다.");
+		failMessageVerify("존재하지 않는 이메일입니다.");
 		assertEquals(expect, result);
 	}
 	
@@ -69,9 +70,9 @@ public class AccountControllerTest {
 		when(service.findByEmail(any(String.class))).thenReturn(account);
 		when(account.getPassword()).thenReturn("pass");
 		when(account.getState()).thenReturn("REG");
-		doReturn(expect).when(spy).failMessage("존재하지 않는 비밀번호입니다.");
+		failMessageWhen("존재하지 않는 비밀번호입니다.");
 		Map<String, String> result = spy.login("email","password", session);
-		verify(spy, times(1)).failMessage("존재하지 않는 비밀번호입니다.");
+		failMessageVerify("존재하지 않는 비밀번호입니다.");
 		assertEquals(expect, result);
 	}
 	
@@ -79,9 +80,9 @@ public class AccountControllerTest {
 	public void login_already_withdraw_Test(){
 		when(service.findByEmail(any(String.class))).thenReturn(account);
 		when(account.getState()).thenReturn("DEL");
-		doReturn(expect).when(spy).failMessage("탈퇴한 이메일입니다.");
+		failMessageWhen("탈퇴한 이메일입니다.");
 		Map<String,String> result = spy.login("email","password",session);
-		verify(spy, times(1)).failMessage("탈퇴한 이메일입니다.");
+		failMessageVerify("탈퇴한 이메일입니다.");
 		assertEquals(expect, result);
 	}
 	
@@ -90,10 +91,10 @@ public class AccountControllerTest {
 		when(service.findByEmail(any(String.class))).thenReturn(account);
 		when(account.getState()).thenReturn("REG");
 		when(account.getPassword()).thenReturn("password");
-		doReturn(expect).when(spy).successMessage();
+		successMessageWhen();
 		Map<String,String> result = spy.login("email","password",session);
 		verify(session,times(1)).setAttribute("loginAccount", account);
-		verify(spy,times(1)).successMessage();
+		successMessageVerify();
 		assertEquals(expect, result);
 	}
 	
@@ -111,21 +112,19 @@ public class AccountControllerTest {
 	@Test
 	public void joinPost_exist_test() {
 		when(service.findByEmail(any(String.class))).thenReturn(account);	
-		doReturn(expect).when(spy).failMessage("이미 가입된 회원입니다.");
+		failMessageWhen("이미 가입된 회원입니다.");
 		Map<String,String> result = spy.join(account);
-		verify(spy, times(1)).failMessage("이미 가입된 회원입니다.");
+		failMessageVerify("이미 가입된 회원입니다.");
 		assertEquals(expect, result);
 	}
 	
 	@Test
 	public void joinPost_exception_test() {
 		when(service.findByEmail(any(String.class))).thenReturn(null);
-		DataAccessException exception = mock(DataAccessException.class);
 		when(service.insert(account)).thenThrow(exception);
-		when(exception.getMessage()).thenReturn("데이터에러");
-		doReturn(expect).when(spy).failMessage("데이터에러");
+		exceptionWhen();
 		Map<String,String> result = spy.join(account);
-		verify(spy, times(1)).failMessage("데이터에러");
+		failMessageVerify("데이터 에러");
 		assertEquals(expect, result);
 	}
 	
@@ -146,5 +145,40 @@ public class AccountControllerTest {
 	public void logout_test() {
 		assertEquals("/account/login",ctrl.logout(session));
 		verify(session,times(1)).invalidate();
+	}
+	
+	@Test
+	public void update_not_loggedIn_test() {
+		doReturn(null).when(spy).loginAccount(session);
+		assertEquals("redirect:/account/login", spy.update(session));
+		verify(spy,times(1)).loginAccount(session);
+	}
+	
+	@Test
+	public void update_loggedIn_test() {
+		doReturn(account).when(spy).loginAccount(session);
+		assertEquals("/account/update", spy.update(session));
+		verify(spy,times(1)).loginAccount(session);
+	}
+	
+	private void successMessageVerify() {
+		verify(spy,times(1)).successMessage();
+	}
+
+	private void successMessageWhen() {
+		doReturn(expect).when(spy).successMessage();
+	}
+	
+	private void exceptionWhen(){
+		when(exception.getMessage()).thenReturn("데이터 에러");
+		failMessageWhen("데이터 에러");
+	}
+	
+	private void failMessageVerify(String message) {
+		verify(spy,times(1)).failMessage(message);
+	}
+
+	private void failMessageWhen(String message) {
+		doReturn(expect).when(spy).failMessage(message);
 	}
 }
