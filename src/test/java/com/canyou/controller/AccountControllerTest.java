@@ -31,14 +31,11 @@ public class AccountControllerTest {
 	Map<String,String> expect;
 	
 	@Before 
-	public void setUp(){
+	public void setUp() throws IllegalArgumentException, IllegalAccessException{
+		MockGenerator.setMock(this);
 		ctrl = new AccountController();
-		service = mock(AccountService.class);
 		ctrl.accountService = service;	
 		spy = spy(ctrl);
-		account = mock(AccountVO.class);
-		session = mock(HttpSession.class);
-		expect = mock(Map.class);
 	}
 	
 	@Test
@@ -130,5 +127,18 @@ public class AccountControllerTest {
 		Map<String,String> result = spy.join(account);
 		verify(spy, times(1)).failMessage("데이터에러");
 		assertEquals(expect, result);
+	}
+	
+	@Test
+	public void useInfo_not_loggedIn_test() {
+		doReturn(null).when(spy).loginAccount(session);
+		assertEquals("redirect:/account/login", spy.useInfo(session));
+		verify(spy,times(1)).loginAccount(session);
+	}
+	@Test
+	public void useInfo_loggedIn_test() {
+		doReturn(account).when(spy).loginAccount(session);
+		assertEquals("/account/useInfo", spy.useInfo(session));
+		verify(spy,times(1)).loginAccount(session);
 	}
 }

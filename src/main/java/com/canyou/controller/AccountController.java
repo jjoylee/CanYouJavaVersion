@@ -61,4 +61,11 @@ public class AccountController extends AbstractController{
 			return failMessage(e.getMessage());
 		}
 	}
+	
+	@RequestMapping(value = "/useInfo", method = RequestMethod.GET)
+	public String useInfo(HttpSession session) {
+		if(loginAccount(session) == null)
+			return "redirect:/account/login";
+		return "/account/useInfo";
+	}
 }
