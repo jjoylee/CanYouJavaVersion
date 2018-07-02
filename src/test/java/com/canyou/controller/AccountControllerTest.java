@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -12,11 +13,16 @@ import static org.mockito.Mockito.spy;
 
 import java.util.Map;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
 import com.canyou.model.Account.AccountVO;
 import com.canyou.service.Account.AccountService;
@@ -31,12 +37,16 @@ public class AccountControllerTest{
 	HttpSession session;
 	Map<String,String> expect;
 	DataAccessException exception;
+	JavaMailSender javaMailSender;
+	MimeMessage message;
+	MimeMessageHelper messageHelper;
 	
 	@Before 
 	public void setUp() throws IllegalArgumentException, IllegalAccessException{
 		MockGenerator.setMock(this);
 		ctrl = new AccountController();
 		ctrl.accountService = service;	
+		ctrl.javaMailSender = javaMailSender;	
 		spy = spy(ctrl);
 	}
 	
@@ -256,5 +266,68 @@ public class AccountControllerTest{
 		assertEquals(expect, spy.withdraw(session));
 		withdrawUpdateVerify();
 		failMessageVerify("데이터 에러");
+	}
+	
+	@Test
+	public void findPassword_get_test(){
+		assertEquals("/account/findPassword",ctrl.findPassword(session));
+	}
+	
+//	@Test
+//	public void sendEmail_success_test() throws Exception{
+//		when(javaMailSender.createMimeMessage()).thenReturn(message);
+//		ctrl.sendEmail("you@gmail.com", "password");
+//		verify(messageHelper,times(1)).setFrom("canyou@gmail.com");
+//		verify(messageHelper,times(1)).setTo("you@gmail.com");
+//		verify(messageHelper,times(1)).setSubject("Can You 비밀번호 찾기 입니다.");
+//		verify(messageHelper,times(1)).setText("CanYou에서의 비밀번호는 password 입니다.");
+//		verify(javaMailSender,times(1)).send(message);
+//	}
+	
+	@Test
+	public void findPassword_post_fail_emailNotExist_test(){
+		when(service.findByEmail("you@gmail.com")).thenReturn(null);
+		failMessageWhen("존재하지 않는 이메일입니다.");
+		assertEquals(expect, spy.findPassword("you@gmail.com"));
+		verify(service,times(1)).findByEmail("you@gmail.com");
+		failMessageVerify("존재하지 않는 이메일입니다.");
+	}
+	
+	@Test
+	public void findPassword_post_fail_withdraw_test(){
+		when(service.findByEmail("you@gmail.com")).thenReturn(account);
+		when(account.getState()).thenReturn("DEL");
+		failMessageWhen("탈퇴한 이메일입니다.");
+		assertEquals(expect, spy.findPassword("you@gmail.com"));
+		verify(service,times(1)).findByEmail("you@gmail.com");
+		failMessageVerify("탈퇴한 이메일입니다.");
+	}
+	
+	@Test
+	public void findPassword_post_fail_mailException_test() throws Exception{
+		sendEmailWhen();
+		exceptionWhen();
+		doThrow(exception).when(spy).sendEmail("you@gmail.com", "password");
+		assertEquals(expect, spy.findPassword("you@gmail.com"));
+		verify(service,times(1)).findByEmail("you@gmail.com");
+		verify(spy,times(1)).sendEmail("you@gmail.com", "password");
+		failMessageVerify("데이터 에러");
+	}
+	
+	@Test
+	public void findPassword_post_success_test() throws Exception{
+		sendEmailWhen();
+		successMessageWhen();
+		doNothing().when(spy).sendEmail("you@gmail.com", "password");
+		assertEquals(expect, spy.findPassword("you@gmail.com"));
+		verify(service,times(1)).findByEmail("you@gmail.com");
+		verify(spy,times(1)).sendEmail("you@gmail.com", "password");
+		successMessageVerify();
+	}
+
+	private void sendEmailWhen() {
+		when(service.findByEmail("you@gmail.com")).thenReturn(account);
+		when(account.getState()).thenReturn("REG");
+		when(account.getPassword()).thenReturn("password");
 	}
 }

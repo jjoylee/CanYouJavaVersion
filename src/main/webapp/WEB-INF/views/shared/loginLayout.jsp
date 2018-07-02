@@ -34,6 +34,9 @@
     <script src="../resources/scripts/jquery.form.js"></script>
     <script>
         $.ajaxSetup({ async: false });
+        $(document).on("keypress", "form", function(event) { 
+            return event.keyCode != 13;
+        });
     </script>
     <layout:block name="scripts">
     </layout:block>	

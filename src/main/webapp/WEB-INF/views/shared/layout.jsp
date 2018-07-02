@@ -72,6 +72,9 @@
     <layout:block name="scripts">
     </layout:block>	
     <script type="text/javascript">
+	    $(document).on("keypress", "form", function(event) { 
+	        return event.keyCode != 13;
+	    });
         $("#logout").click(function () {
             var url = "/account/logout";
             $(location).attr('href', url);

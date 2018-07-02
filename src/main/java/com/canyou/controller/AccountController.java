@@ -2,9 +2,12 @@ package com.canyou.controller;
 
 import java.util.Map;
 
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +23,9 @@ public class AccountController extends AbstractController{
 
 	@Autowired
 	AccountService accountService;
+	
+	@Autowired
+	JavaMailSender javaMailSender;
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login(HttpSession session) {
@@ -112,6 +118,38 @@ public class AccountController extends AbstractController{
 			logoutProcess(session);
 			return successMessage();
 		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
+	}
+	
+	public void sendEmail(String email, String password) throws Exception{
+		MimeMessage message = javaMailSender.createMimeMessage();
+		MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+		messageHelper.setTo(email);
+		messageHelper.setSubject("Can You 비밀번호 찾기 입니다.");
+		String text = "CanYou에서의 비밀번호는 " + password + " 입니다.";
+		messageHelper.setText(text);
+		javaMailSender.send(message);
+	}
+	
+	@RequestMapping(value = "/findPassword", method = RequestMethod.GET)
+	public String findPassword (HttpSession session) {
+		return "/account/findPassword";
+	}
+	
+	@RequestMapping(value = "/findPassword", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> findPassword (@RequestParam("email") String email) {
+		AccountVO account = accountService.findByEmail(email);
+		if(account == null)
+			return failMessage("존재하지 않는 이메일입니다.");
+		if(account.getState().equals("DEL"))
+			return failMessage("탈퇴한 이메일입니다.");
+		try{
+			sendEmail(email,account.getPassword());
+			return successMessage();
+		}catch(Exception e){
+			System.out.println("여기임?");
 			return failMessage(e.getMessage());
 		}
 	}
