@@ -2,6 +2,7 @@ package com.canyou.controller;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -21,7 +22,7 @@ import com.canyou.model.Account.AccountVO;
 import com.canyou.service.Account.AccountService;
 
 
-public class AccountControllerTest {
+public class AccountControllerTest{
 
 	AccountController ctrl;
 	AccountService service;
@@ -142,9 +143,16 @@ public class AccountControllerTest {
 	}
 	
 	@Test
-	public void logout_test() {
-		assertEquals("/account/login",ctrl.logout(session));
+	public void logoutProcess_test() {
+		ctrl.logoutProcess(session);
 		verify(session,times(1)).invalidate();
+	}
+	
+	@Test
+	public void logout_test() {
+		doNothing().when(spy).logoutProcess(session);
+		assertEquals("/account/login",spy.logout(session));
+		verify(spy,times(1)).logoutProcess(session);
 	}
 	
 	@Test
@@ -218,6 +226,35 @@ public class AccountControllerTest {
 		when(service.update(account)).thenThrow(exception);
 		assertEquals(expect,spy.update("PW", "PW1",session));
 		accountUpdateVerify();
+		failMessageVerify("데이터 에러");
+	}
+	
+	@Test
+	public void withdraw_success_test(){
+		doReturn(account).when(spy).loginAccount(session);
+		when(account.getId()).thenReturn(1);
+		doNothing().when(spy).logoutProcess(session);
+		successMessageWhen();
+		assertEquals(expect, spy.withdraw(session));
+		withdrawUpdateVerify();
+		verify(spy,times(1)).logoutProcess(session);
+		successMessageVerify();
+	}
+
+	private void withdrawUpdateVerify() {
+		verify(spy,times(1)).loginAccount(session);
+		verify(account,times(1)).getId();
+		verify(service,times(1)).updateState(1, "DEL");
+	}
+	
+	@Test
+	public void withdraw_fail_exception_test(){
+		doReturn(account).when(spy).loginAccount(session);
+		when(account.getId()).thenReturn(1);
+		exceptionWhen();
+		when(service.updateState(1, "DEL")).thenThrow(exception);
+		assertEquals(expect, spy.withdraw(session));
+		withdrawUpdateVerify();
 		failMessageVerify("데이터 에러");
 	}
 }

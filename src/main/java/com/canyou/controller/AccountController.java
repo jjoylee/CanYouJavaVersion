@@ -71,8 +71,12 @@ public class AccountController extends AbstractController{
 	
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpSession session) {
-		session.invalidate();
+		logoutProcess(session);
 		return "/account/login";
+	}
+
+	public void logoutProcess(HttpSession session) {
+		session.invalidate();
 	}
 	
 	
@@ -93,6 +97,19 @@ public class AccountController extends AbstractController{
 			account.setPassword(newPassword);
 			accountService.update(account);
 			session.setAttribute("loginAccount", account);
+			return successMessage();
+		}catch(Exception e){
+			return failMessage(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value = "/withdraw", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, String> withdraw(HttpSession session) {
+		try{
+			AccountVO account = loginAccount(session);
+			accountService.updateState(account.getId(),"DEL");
+			logoutProcess(session);
 			return successMessage();
 		}catch(Exception e){
 			return failMessage(e.getMessage());

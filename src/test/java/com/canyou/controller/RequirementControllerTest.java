@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.dao.DataAccessException;
 import org.springframework.ui.Model;
 
@@ -25,7 +24,6 @@ import com.canyou.model.LectureCategoryRequirement.LectureCategoryRequirementVO;
 import com.canyou.model.LectureType.LectureTypeVO;
 import com.canyou.model.LectureTypeRequirement.LectureTypeRequirementVO;
 import com.canyou.model.ScoreRequirement.ScoreRequirementVO;
-import com.canyou.model.Section.SectionVO;
 import com.canyou.model.SectionRequirement.SectionRequirementVO;
 import com.canyou.service.LectureCategory.LectureCategoryService;
 import com.canyou.service.LectureCategoryRequirement.LectureCategoryRequirementService;

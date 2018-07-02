@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ import com.canyou.service.LectureType.LectureTypeService;
 import com.canyou.service.Section.SectionService;
 
 
-public class LectureControllerTest extends AbstractTest{
+public class LectureControllerTest{
 	LectureController ctrl;
 	LectureController spy;
 	LectureDetailService detailService;
