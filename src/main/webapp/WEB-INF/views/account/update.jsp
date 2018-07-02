@@ -2,6 +2,9 @@
 <%@ taglib uri="http://kwonnam.pe.kr/jsp/template-inheritance" prefix="layout"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <layout:extends name="../shared/layout.jsp">
+	<layout:put block="title">
+		<title>update</title>
+	</layout:put>
 	<layout:put block="contents">
 		<div class="header">
 		    <h2>비밀번호 변경</h2>

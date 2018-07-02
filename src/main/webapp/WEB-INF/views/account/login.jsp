@@ -2,6 +2,9 @@
 <%@ taglib uri="http://kwonnam.pe.kr/jsp/template-inheritance" prefix="layout"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <layout:extends name="../shared/loginLayout.jsp">
+	<layout:put block="title">
+		<title>login</title>
+	</layout:put>
 	<layout:put block="contents">
 		<h2>Login</h2>
 		<form class="pure-form" id="frmLogin" method="post" action="/account/login">

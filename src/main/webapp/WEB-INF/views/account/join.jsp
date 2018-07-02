@@ -2,6 +2,9 @@
 <%@ taglib uri="http://kwonnam.pe.kr/jsp/template-inheritance" prefix="layout"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <layout:extends name="../shared/loginLayout.jsp">
+	<layout:put block="title">
+		<title>join</title>
+	</layout:put>
 	<layout:put block="contents">
 		<h2>회원가입</h2>
 		<form class="pure-form pure-form-aligned" id="frmJoin" action="/account/join" method="post">
@@ -23,6 +26,7 @@
 		
 		        <div class="pure-controls">
 		            <button type="button" class="pure-button pure-button-primary" id="btnJoin">등록</button>
+		            <button type="button" class="pure-button pure-button-primary" id="btnCancel">취소</button>
 		        </div>
 		    </fieldset>
 		</form>
@@ -74,6 +78,11 @@
             });
             $("#frmJoin").submit();
             return false;
+        });
+        
+        $("#btnCancel").click(function () {
+        	var url = "/account/login";
+            $(location).attr('href', url);
         });
     </script>
     </layout:put>

@@ -7,7 +7,8 @@
 	<link rel="stylesheet" href="../resources/css/pure-min.css">
     <link rel="stylesheet" href="../resources/css/marketing.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Title</title>
+    <layout:block name="title">
+    </layout:block>	
     <style>
         .pure-form
         {
