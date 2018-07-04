@@ -62,10 +62,8 @@ public class ResultServiceImpl implements ResultService{
 	
 	public List<ResultVO> getResults(){
 		List<ResultVO> results = new ArrayList<ResultVO>();
-		for(LectureCategoryRequirementVO requirement : categoryRequirements){
-			addCategoryRequirement(results, requirement);
-			addTypeRequirement(results, requirement);
-		}
+		addCategoryRequirement(results);
+		addTypeRequirement(results);
 		addSectionRequirement(results);
 		addScoreRequirement(results);
 		return results;
@@ -113,19 +111,20 @@ public class ResultServiceImpl implements ResultService{
 		}
 		return false;
 	}
-	private void addCategoryRequirement(List<ResultVO> results, LectureCategoryRequirementVO requirement) {
-		ResultVO result = new ResultVO();
-		result.setName(requirement.getLectureCategoryName());
-		result.setRequirement(requirement.getCutline());
-		result.setScore(getCreditByCategory(requirement.getLectureCategoryId()));
-		results.add(result);
+	private void addCategoryRequirement(List<ResultVO> results) {
+		for(LectureCategoryRequirementVO requirement : categoryRequirements){
+			ResultVO result = new ResultVO();
+			result.setName(requirement.getLectureCategoryName());
+			result.setRequirement(requirement.getCutline());
+			result.setScore(getCreditByCategory(requirement.getLectureCategoryId()));
+			results.add(result);	
+		}
 	}
 	
-	private void addTypeRequirement(List<ResultVO> results, LectureCategoryRequirementVO requirement) {
+	private void addTypeRequirement(List<ResultVO> results) {
 		for(LectureTypeRequirementVO typeRequirement : typeRequirements){
-			if(typeRequirement.getLectureCategoryId() != requirement.getLectureCategoryId()) continue;
 			ResultVO result = new ResultVO();
-			result.setName(typeRequirement.getLectureTypeName() +" " + requirement.getLectureCategoryName());
+			result.setName(typeRequirement.getLectureTypeName() +" " + typeRequirement.getLectureCategoryName());
 			result.setRequirement(typeRequirement.getCutline());
 			result.setScore(getCreditByType(typeRequirement.getLectureTypeId()));
 			results.add(result);

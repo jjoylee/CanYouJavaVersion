@@ -28,6 +28,7 @@
 		<interceptor>
 			<mapping path="/lecture/*"/>
 			<mapping path="/requirement/*"/>
+			<mapping path="/result/*"/>
 			<beans:ref bean="loginCheckInterceptor"/>
 		</interceptor>
 	</interceptors>
